@@ -5,8 +5,8 @@ const account = require("../controllers/accountController");
     Account routes
 */
 
-router.post("/create", account.create);
 router.get("/", account.get);
+router.post("/create", account.create);
 router.put("/:id", account.update);
 router.delete("/:id", account.delete);
 

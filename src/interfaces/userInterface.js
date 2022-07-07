@@ -31,7 +31,8 @@ const userInterface = {
                 email: user?.email?.toLowerCase(),
                 app: user?.app?.toLowerCase(),
                 password: hashedPassword,
-                level: 2
+                level: 2,
+                status: 0
             });
             // Save the user
             return newUser.save();
