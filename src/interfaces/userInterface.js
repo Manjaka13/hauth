@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const { hash } = require("../utils");
 const User = require("../models/userModel");
 
 /*
@@ -22,7 +22,7 @@ const userInterface = {
                 throw "Please provide a valid password";
             // Hash password
             else
-                return bcrypt.hash(user.password, 10);
+                return hash(user.password);
         })
         .then((hashedPassword) => {
             // Setup the data
@@ -50,7 +50,7 @@ const userInterface = {
             reject("Some fields are immutable and could not be updated");
         else {
             if (user.password)
-                bcrypt.hash(user.password, 10)
+                hash(user.password)
                     .then((hashedPassword) => User.findById(id).updateOne({ ...user, password: hashedPassword }))
                     .then(() => resolve())
                     .catch((err) => reject(err));

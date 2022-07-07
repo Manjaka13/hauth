@@ -1,3 +1,5 @@
+const bcrypt = require("bcrypt");
+
 /*
 	Various usefull functions
 */
@@ -16,4 +18,7 @@ const failure = (err) => answer(err._message ? err._message : typeof err === "st
 // Returns good answer
 const success = (caption, payload) => answer(caption, payload);
 
-module.exports = { answer, success, failure };
+// Hashes password
+const hash = (password) => bcrypt.hash(password, 10);
+
+module.exports = { answer, success, failure, hash };
