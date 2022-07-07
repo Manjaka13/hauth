@@ -10,17 +10,17 @@ const tokenSecret = process.env.TOKEN_SECRET;
 const refreshSecret = process.env.REFRESH_SECRET;
 const documentation = {
     "/": {
-        access: "public",
+        access: "public, no login",
         type: "GET",
         description: "Displays exhaustive list of all API routes and their parameters."
     },
     "user/get": {
-        access: "master",
+        access: "master, needs login",
         type: "GET",
         description: "Gets all user list"
     },
     "user/create": {
-        level: "public",
+        access: "public, no login",
         type: "POST",
         description: "Creates new user",
         parameters: {
@@ -33,7 +33,7 @@ const documentation = {
         }
     },
     "user/update": {
-        level: "public",
+        access: "public, needs login",
         type: "PUT",
         description: "Updates user information",
         parameters: {
@@ -45,9 +45,19 @@ const documentation = {
         note: "The account id to be updated is extracted from provided token in authorization header"
     },
     "user/delete/:id": {
-        level: "master",
+        access: "master, needs login",
         type: "DELETE",
         description: "Deletes user"
+    },
+    "login": {
+        access: "public, no login",
+        type: "POST",
+        description: "Logs user in, returns user with token",
+        parameters: {
+            "email": "String, required",
+            "password": "String, required",
+            "app": "String, required"
+        },
     }
 };
 
