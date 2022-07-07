@@ -1,4 +1,5 @@
 const { hash } = require("../utils");
+const { master } = require("../helpers/const");
 const User = require("../models/userModel");
 
 /*
@@ -6,39 +7,45 @@ const User = require("../models/userModel");
 */
 
 const userInterface = {
-    create: (user) => User.find({
-        email: user?.email?.toLowerCase(),
-        app: user?.app?.toLowerCase(),
-    })
-        .then((found) => {
-            return found.length > 0;
+    // Creates new user
+    create: (user) => {
+        let isMaster = false;
+        if (user?.email?.toLowerCase() === master)
+            isMaster = true;
+        return User.find({
+            email: user?.email?.toLowerCase(),
+            app: user?.app?.toLowerCase(),
         })
-        .then((existing) => {
-            // Account already exists
-            if (existing)
-                throw "This account already exist";
-            // Invalid password
-            else if (!user.password || user.password.length < 3)
-                throw "Please provide a valid password";
-            // Hash password
-            else
-                return hash(user.password);
-        })
-        .then((hashedPassword) => {
-            // Setup the data
-            const newUser = new User({
-                ...user,
-                email: user?.email?.toLowerCase(),
-                app: user?.app?.toLowerCase(),
-                password: hashedPassword,
-                level: 2,
-                status: 0
-            });
-            // Save the user
-            return newUser.save();
-        })
-        // Everything went good
-        .then((newUser) => ({ ...newUser._doc, password: undefined })),
+            .then((found) => {
+                return found.length > 0;
+            })
+            .then((existing) => {
+                // Account already exists
+                if (existing)
+                    throw "This account already exist";
+                // Invalid password
+                else if (!user.password || user.password.length < 3)
+                    throw "Please provide a valid password";
+                // Hash password
+                else
+                    return hash(user.password);
+            })
+            .then((hashedPassword) => {
+                // Setup the data
+                const newUser = new User({
+                    ...user,
+                    email: user?.email?.toLowerCase(),
+                    app: user?.app?.toLowerCase(),
+                    password: hashedPassword,
+                    level: isMaster ? 0 : 2,
+                    status: 0
+                });
+                // Save the user
+                return newUser.save();
+            })
+            // Everything went good
+            .then((newUser) => ({ ...newUser._doc, password: undefined }));
+    },
 
     // Returns user list
     get: () => User.find()

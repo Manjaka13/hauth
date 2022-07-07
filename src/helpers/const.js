@@ -5,6 +5,7 @@
 const port = process.env.PORT || 3001;
 const databaseUrl = process.env.DATABASE_HOST;
 const databaseName = process.env.DATABASE_NAME;
+const master = process.env.MASTER || "manjaka.rajaonson@gmail.com";
 const documentation = {
     "/": {
         type: "GET",
@@ -45,6 +46,7 @@ const documentation = {
 };
 
 module.exports = {
+    master,
     port,
     databaseUrl,
     databaseName,
