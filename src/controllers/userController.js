@@ -18,9 +18,8 @@ const userController = {
             .catch(err => res.json(failure(err)));
     },
     update(req, res) {
-        const { id } = req.params;
         const user = req.body;
-        userInterface.update(id, user)
+        userInterface.update(res.locals.user.id, user)
             .then(() => res.json(success("User information updated")))
             .catch(err => res.json(failure(err)));
     },

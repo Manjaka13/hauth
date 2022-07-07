@@ -8,7 +8,7 @@ const { isLoggedIn, isMaster } = require("../middlewares/authMiddleware");
 
 router.get("/get", isLoggedIn, isMaster, user.get);
 router.post("/create", user.create);
-router.put("/update/:id", isLoggedIn, user.update);
+router.put("/update", isLoggedIn, user.update);
 router.delete("/delete/:id", isLoggedIn, isMaster, user.delete);
 
 module.exports = { path: "/user", router };
