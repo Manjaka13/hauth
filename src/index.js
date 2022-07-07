@@ -6,6 +6,9 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const docRoute = require("./routes/docRoute");
 const userRoute = require("./routes/userRoute");
+const authRoute = require("./routes/authRoute");
+const jsonMiddleware = require("./middlewares/jsonMiddleware");
+const { authMiddleware } = require("./middlewares/authMiddleware");
 const { port, databaseUrl, databaseName } = require("./helpers/const");
 
 /*
@@ -19,8 +22,11 @@ const app = Express();
 app.use(cors());
 app.use(Express.urlencoded({ extended: true }));
 app.use(Express.json());
+app.use(jsonMiddleware);
+app.use(authMiddleware);
 app.use(docRoute.path, docRoute.router);
 app.use(userRoute.path, userRoute.router);
+app.use(authRoute.path, authRoute.router);
 
 // Get MongoDB ready
 const url = `${databaseUrl}/${databaseName}`;

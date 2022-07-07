@@ -13,12 +13,25 @@ const answer = (caption, payload, status) => ({
 });
 
 // Returns catched error
-const failure = (err) => answer(err._message ? err._message : typeof err === "string" ? err : "An error occured");
+const failure = (err) => answer(err?._message ? err._message : typeof err === "string" ? err : "An error occured");
 
 // Returns good answer
-const success = (caption, payload) => answer(caption, payload);
+const success = (caption, payload) => answer(caption, payload, 1);
 
 // Hashes password
 const hash = (password) => bcrypt.hash(password, 10);
 
-module.exports = { answer, success, failure, hash };
+// Compares password
+const compare = (password, hashedPassword) => bcrypt.compare(password, hashedPassword);
+
+// Checks if email is valid
+const isValidEmail = (email) => (
+	typeof email === "string" &&
+	email
+		.toLowerCase()
+		.match(
+			/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+		)
+);
+
+module.exports = { answer, success, failure, hash, compare, isValidEmail };

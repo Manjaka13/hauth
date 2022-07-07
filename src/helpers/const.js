@@ -6,6 +6,8 @@ const port = process.env.PORT || 3001;
 const databaseUrl = process.env.DATABASE_HOST;
 const databaseName = process.env.DATABASE_NAME;
 const master = process.env.MASTER || "manjaka.rajaonson@gmail.com";
+const tokenSecret = process.env.TOKEN_SECRET;
+const refreshSecret = process.env.REFRESH_SECRET;
 const documentation = {
     "/": {
         type: "GET",
@@ -48,5 +50,7 @@ module.exports = {
     port,
     databaseUrl,
     databaseName,
-    documentation
+    documentation,
+    tokenSecret,
+    refreshSecret
 };
