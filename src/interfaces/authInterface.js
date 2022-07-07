@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const { isValidEmail, compare } = require("../utils");
-const { tokenSecret, refreshSecret } = require("../helpers/const");
+const { tokenSecret } = require("../helpers/const");
 
 /*
     Interfaces for authentication
@@ -51,7 +51,7 @@ const authInterface = {
             else
                 resolve(user);
         });
-    })
+    }),
 };
 
 module.exports = authInterface;

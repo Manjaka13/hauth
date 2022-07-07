@@ -7,7 +7,6 @@ const databaseUrl = process.env.DATABASE_HOST;
 const databaseName = process.env.DATABASE_NAME;
 const master = process.env.MASTER || "manjaka.rajaonson@gmail.com";
 const tokenSecret = process.env.TOKEN_SECRET;
-const refreshSecret = process.env.REFRESH_SECRET;
 const documentation = {
     "/": {
         access: "public, no login",
@@ -67,6 +66,5 @@ module.exports = {
     databaseUrl,
     databaseName,
     documentation,
-    tokenSecret,
-    refreshSecret
+    tokenSecret
 };
