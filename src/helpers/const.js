@@ -11,7 +11,7 @@ const documentation = {
         type: "GET",
         description: "Displays exhaustive list of all API routes and their parameters."
     },
-    "user": {
+    "user/get": {
         type: "GET",
         description: "Gets all user list"
     },
@@ -27,22 +27,20 @@ const documentation = {
             "app": "String, required"
         }
     },
-    "user/:id": [
-        {
-            type: "PUT",
-            description: "Updates user information",
-            parameters: {
-                "firstname": "String",
-                "lastname": "String",
-                "avatar": "String",
-                "password": "String"
-            }
-        },
-        {
-            type: "DELETE",
-            description: "Deletes user"
+    "user/update/:id": {
+        type: "PUT",
+        description: "Updates user information",
+        parameters: {
+            "firstname": "String",
+            "lastname": "String",
+            "avatar": "String",
+            "password": "String"
         }
-    ]
+    },
+    "user/delete/:id": {
+        type: "DELETE",
+        description: "Deletes user"
+    }
 };
 
 module.exports = {
