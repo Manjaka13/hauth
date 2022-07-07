@@ -2,10 +2,10 @@ const { success, failure } = require("../utils");
 const userInterface = require("../interfaces/userInterface");
 
 /*
-    Controllers for account module
+    Controllers for user module
 */
 
-const account = {
+const userController = {
     create: (req, res) => {
         const user = req.body;
         userInterface.create(user)
@@ -32,4 +32,4 @@ const account = {
     }
 };
 
-module.exports = account;
+module.exports = userController;

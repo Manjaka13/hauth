@@ -10,13 +10,13 @@ const documentation = {
         type: "GET",
         description: "Displays exhaustive list of all API routes and their parameters."
     },
-    "account": {
+    "user": {
         type: "GET",
-        description: "Gets all account list"
+        description: "Gets all user list"
     },
-    "account/create": {
+    "user/create": {
         type: "POST",
-        description: "Creates new account",
+        description: "Creates new user",
         parameters: {
             "firstname": "String",
             "lastname": "String",
@@ -26,10 +26,10 @@ const documentation = {
             "app": "String, required"
         }
     },
-    "account/:id": [
+    "user/:id": [
         {
             type: "PUT",
-            description: "Updates account information",
+            description: "Updates user information",
             parameters: {
                 "firstname": "String",
                 "lastname": "String",
@@ -39,7 +39,7 @@ const documentation = {
         },
         {
             type: "DELETE",
-            description: "Deletes account"
+            description: "Deletes user"
         }
     ]
 };
