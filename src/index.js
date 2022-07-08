@@ -33,7 +33,7 @@ const url = `${databaseUrl}/${databaseName}`;
 const options = { useNewUrlParser: true, useUnifiedTopology: true };
 mongoose.connect(url, options)
     .then(() => {
-        console.log("Connected to MongoDB");
+        console.log("Connected to database");
         // Awaiting for incoming request
         app.listen(port, () => {
             console.log(`HAuth running on port ${port}`);
