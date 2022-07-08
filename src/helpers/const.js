@@ -58,6 +58,14 @@ const documentation = {
             "password": "String, required",
             "app": "String, required"
         },
+    },
+    "verify": {
+        access: "public, no login",
+        type: "POST",
+        description: "Verifies given token (in Authorization bearer or body)",
+        parameters: {
+            "token": "String, required"
+        }
     }
 };
 
