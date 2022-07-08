@@ -28,7 +28,6 @@ const userController = {
     // Updates user data
     update(req, res) {
         const user = req.body;
-        console.log(res.locals.user)
         if (user.email || user.level || user.app || user.status)
             res.json(failure("Some fields are immutable and could not be updated"));
         else
@@ -60,7 +59,7 @@ const userController = {
         else if (!password)
             res.json(failure("Please provide the password used to create this account"));
         else
-            User.confirm(confirmationId, id, app, password)
+            User.confirm(id, app, password, confirmationId)
                 .then(() => res.json(success("User account confirmed")))
                 .catch(err => res.json(failure(err)));
     }

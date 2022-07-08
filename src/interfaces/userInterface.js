@@ -50,9 +50,8 @@ const userInterface = {
     delete: (id, app) => database.deleteUser(id, app),
 
     // Confirm user accoutn
-    confirm: (confirmationId, id, app, password) => database.isCorrectConfirmationId(id, confirmationId)
-        .then(() => database.isCorrectPassword(id, app, password))
-        .then(() => database.updateUser(id, { status: 1, confirmationId: null }))
+    confirm: (id, app, password, confirmationId) => database.isConfirmationCorrect(id, app, password, confirmationId)
+        .then(() => database.updateUser(id, { status: 1, confirmationId: "" }))
 };
 
 module.exports = userInterface;

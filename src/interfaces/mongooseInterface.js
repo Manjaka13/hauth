@@ -47,10 +47,12 @@ const mongoose = {
                 throw "Unable to find this user";
         }),
 
-    // Checks if it's the correct password for this account
-    isCorrectPassword: (id, app, password) => User.findById(id)
+    // Check confirmation process
+    isConfirmationCorrect: (id, app, password, confirmationId) => User.findById(id)
         .then((user) => {
-            if (user.app != app)
+            if (user.confirmationId != confirmationId)
+                throw "Unknown confirmation link";
+            else if (user.app != app)
                 throw "Unable to confirm unexisting account";
             else
                 return compare(password, user.password);
@@ -59,12 +61,6 @@ const mongoose = {
             if (!same)
                 throw "Password does not match account's password";
         }),
-
-    isCorrectConfirmationId: (id, confirmationId) => User.findById(id)
-        .then((user) => {
-            if (user.confirmationId != confirmationId)
-                throw "Unknown confirmation link";
-        })
 };
 
 module.exports = mongoose;
