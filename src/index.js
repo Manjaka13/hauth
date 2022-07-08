@@ -11,6 +11,7 @@ const userRoute = require("./routes/userRoute");
 // Middlewares
 const jsonMiddleware = require("./middlewares/jsonMiddleware");
 const { authMiddleware } = require("./middlewares/authMiddleware");
+const notfoundMiddleware = require("./middlewares/notfoundMiddleware");
 
 /*
     Server main entry
@@ -29,6 +30,7 @@ app.use(authMiddleware);
 // Setup routes
 app.use(docRoute.path, docRoute.router);
 app.use(userRoute.path, userRoute.router);
+app.use(notfoundMiddleware);
 
 // Connects to database
 database.connect()
