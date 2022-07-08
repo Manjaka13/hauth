@@ -54,11 +54,12 @@ const documentation = {
         type: "POST",
         description: "Confirms user account",
         parameters: {
+            "confirmationId": "String, required",
             "app": "String, required",
             "password": "String, required"
         },
     },
-    "login": {
+    "user/login": {
         access: "public, no login",
         type: "POST",
         description: "Logs user in, returns user with token",
@@ -68,7 +69,7 @@ const documentation = {
             "app": "String, required"
         },
     },
-    "verify": {
+    "user/verify": {
         access: "public, no login",
         type: "POST",
         description: "Verifies given token (in Authorization bearer or body)",

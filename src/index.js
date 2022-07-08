@@ -8,7 +8,6 @@ const { port } = require("./helpers/const");
 // Routes
 const docRoute = require("./routes/docRoute");
 const userRoute = require("./routes/userRoute");
-const authRoute = require("./routes/authRoute");
 // Middlewares
 const jsonMiddleware = require("./middlewares/jsonMiddleware");
 const { authMiddleware } = require("./middlewares/authMiddleware");
@@ -30,7 +29,6 @@ app.use(authMiddleware);
 // Setup routes
 app.use(docRoute.path, docRoute.router);
 app.use(userRoute.path, userRoute.router);
-app.use(authRoute.path, authRoute.router);
 
 // Connects to database
 database.connect()

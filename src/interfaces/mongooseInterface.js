@@ -1,7 +1,8 @@
+const jwt = require("jsonwebtoken");
 const Mongoose = require("mongoose");
 const User = require("../models/userModel");
 const { databaseUrl, databaseName } = require("../helpers/const");
-const { formatUser, compare } = require("../helpers/utils");
+const { mongooseFormat, compare } = require("../helpers/utils");
 
 /*
     Database manipulation through Mongoose
@@ -13,15 +14,15 @@ const mongoose = {
 
     // Finds the user that meets the specified fields
     findUser: (researchFields, app) => User.findOne({ ...researchFields, app })
-        .then(formatUser),
+        .then(mongooseFormat),
 
     // Find user by name
     findUserById: (id) => User.findById(id)
-        .then(formatUser),
+        .then(mongooseFormat),
 
     // Returns all users for the provided app name
     findUserList: (app) => User.find({ app })
-        .then((list) => list.map((account) => formatUser(account))),
+        .then((list) => list.map(mongooseFormat)),
 
     // Creates new user
     createUser: (user, isMaster, hashedPassword, hashedEmail) => new User({
@@ -33,7 +34,7 @@ const mongoose = {
         status: 0,
         confirmationId: hashedEmail
     }).save()
-        .then(formatUser),
+        .then(mongooseFormat),
 
     // Updates user data
     updateUser: (id, data) => User.findById(id).updateOne(data),

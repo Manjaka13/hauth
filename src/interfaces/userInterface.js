@@ -1,5 +1,6 @@
-const { hash } = require("../helpers/utils");
-const { master } = require("../helpers/const");
+const jwt = require("jsonwebtoken");
+const { hash, compare, removeProtectedFields } = require("../helpers/utils");
+const { master, tokenSecret } = require("../helpers/const");
 const database = require("../interfaces/mongooseInterface");
 
 /*
@@ -19,19 +20,21 @@ const userInterface = {
         })
         .then((hashedPassword) => {
             return hash(user.email)
-                .then((hashedEmail) => database.createUser(user, user.email === master, hashedPassword, hashedEmail));
+                .then((hashedEmail) => database.createUser(user, user.email === master, hashedPassword, hashedEmail))
+                .then(removeProtectedFields);
         }),
 
     // Returns user list
-    getAll: (app) => database.findUserList(app),
+    getAll: (app) => database.findUserList(app)
+        .then(removeProtectedFields),
 
     // Returns user with provided id and app
     get: (id, app) => database.findUserById(id)
-        .then((user) => user.app === app ? user : null),
+        .then((user) => user.app === app ? removeProtectedFields(user) : null),
 
     // Updates user info
     update: (id, user) => new Promise((resolve, reject) => {
-        if (user.email || user.level || user.app || user.status)
+        if (user.email || user.level || user.app || user.status || user.confirmationId)
             reject("Some fields are immutable and could not be updated");
         else {
             hash(user.password || "foo")
@@ -51,7 +54,40 @@ const userInterface = {
 
     // Confirm user accoutn
     confirm: (id, app, password, confirmationId) => database.isConfirmationCorrect(id, app, password, confirmationId)
-        .then(() => database.updateUser(id, { status: 1, confirmationId: "" }))
+        .then(() => database.updateUser(id, { status: 1, confirmationId: "" })),
+
+    // Logs user in
+    login: (email, password, app) => new Promise((resolve, reject) => {
+        let user = {};
+        database.findUser({ email }, app)
+            .then((foundUser) => {
+                user = foundUser;
+                if (!user)
+                    throw "Invalid credentials";
+                else
+                    return compare(password, user.password);
+            })
+            .then((same) => {
+                if (!same)
+                    throw "Invalid password";
+                else {
+                    user = removeProtectedFields(user);
+                    user.token = jwt.sign(user, tokenSecret, { expiresIn: "1h" });
+                    resolve(user);
+                }
+            })
+            .catch(err => reject(err));
+    }),
+
+    // Verifies user token validity
+    verify: (token) => new Promise((resolve, reject) => {
+        jwt.verify(token, tokenSecret, (err, user) => {
+            if (err)
+                reject("Please login first.");
+            else
+                resolve(removeProtectedFields(user));
+        });
+    }),
 };
 
 module.exports = userInterface;

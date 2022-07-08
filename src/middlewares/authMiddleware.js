@@ -1,14 +1,15 @@
 const { failure } = require("../helpers/utils");
-const { verifyToken } = require("../interfaces/authInterface");
+const { verify } = require("../interfaces/userInterface");
+const database = require("../interfaces/mongooseInterface");
 
 // Validates token to user object
 const authMiddleware = (req, res, next) => {
     let token = req.headers["authorization"];
     if (token)
         token = token.replace("Bearer ", "");
-    verifyToken(token)
+    verify(token)
         .then((user) => {
-            res.locals.user = { ...user, id: user._id, _id: undefined };
+            res.locals.user = user;
         })
         .catch(() => {
             res.locals.user = undefined;
@@ -18,8 +19,16 @@ const authMiddleware = (req, res, next) => {
 
 // Protects routes from people that aren't logged in
 const isLoggedIn = (req, res, next) => {
-    if (res.locals.user)
-        next();
+    const user = res.locals.user;
+    if (user && user?.id)
+        database.findUserById(user.id)
+            .then((user) => {
+                if (user.status != 1)
+                    throw "This account isn't active";
+                else
+                    next();
+            })
+            .catch(err => res.json(failure(err)));
     else
         res.json(failure("Please login first"));
 };

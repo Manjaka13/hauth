@@ -34,8 +34,11 @@ const isValidEmail = (email) => (
 		)
 );
 
+// Format mongoose data
+const mongooseFormat = (user) => user ? ({ ...user._doc, id: user.id, _id: undefined }) : null;
+
 // Returns only specific fields
-const formatUser = (user) => user ? ({ ...user._doc, id: user.id, _id: undefined, password: undefined, confirmationId: undefined }) : null;
+const removeProtectedFields = (user) => user ? ({ ...user, password: undefined, confirmationId: undefined }) : null;
 
 module.exports = {
 	answer,
@@ -44,5 +47,6 @@ module.exports = {
 	hash,
 	compare,
 	isValidEmail,
-	formatUser
+	mongooseFormat,
+	removeProtectedFields
 };

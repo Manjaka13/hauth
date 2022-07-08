@@ -1,4 +1,4 @@
-const { success, failure, compare } = require("../helpers/utils");
+const { success, failure, compare, isValidEmail } = require("../helpers/utils");
 const User = require("../interfaces/userInterface");
 
 /*
@@ -50,8 +50,8 @@ const userController = {
 
     // Confirms user account
     confirm: (req, res) => {
-        const { confirmationId } = req.params;
-        const { id, app, password } = req.body;
+        const { id } = req.params;
+        const { confirmationId, app, password } = req.body;
         if (!id)
             res.json(failure("Please provide valid id"));
         else if (!app)
@@ -62,6 +62,34 @@ const userController = {
             User.confirm(id, app, password, confirmationId)
                 .then(() => res.json(success("User account confirmed")))
                 .catch(err => res.json(failure(err)));
+    },
+
+    // Logs user in
+    login: (req, res) => {
+        const { email, password, app } = req.body;
+        const { user } = res.locals;
+        if (user)
+            res.json(failure("You are already logged in"));
+        else {
+            if (!isValidEmail(email))
+                res.json(failure("Please provide a valid email"));
+            else if (typeof password != "string")
+                res.json(failure("Please provide a valid password"));
+            else if (typeof app != "string")
+                res.json(failure("Please provide a valid app name"));
+            else
+                User.login(email.toLowerCase(), password, app.toLowerCase())
+                    .then((user) => res.json(success("User logged in", user)))
+                    .catch(err => res.json(failure(err)));
+        }
+    },
+
+    // Verifies token
+    verify: (req, res) => {
+        const token = req.headers["authorization"]?.replace("Bearer ", "") || req.body.token;
+        User.verify(token)
+            .then((user) => res.json(success("User logged in", user)))
+            .catch(err => res.json(failure(err)));
     }
 };
 
