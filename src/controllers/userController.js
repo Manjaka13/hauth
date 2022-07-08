@@ -1,5 +1,6 @@
-const { success, failure, compare, isValidEmail } = require("../helpers/utils");
+const { success, failure, isValidEmail } = require("../helpers/utils");
 const User = require("../interfaces/userInterface");
+const { master } = require("../helpers/const");
 
 /*
     Controllers for user module
@@ -9,13 +10,23 @@ const userController = {
     // Creates new user
     create: (req, res) => {
         const user = req.body;
-        if (user.email)
+        let level = res.locals.admin ? 1 : 2;
+        if (user.email) {
             user.email = user.email.toLowerCase();
+            if (user.email === master)
+                level = 0;
+        }
         if (user.app)
             user.app = user.app.toLowerCase();
-        User.create(user)
-            .then((newUser) => res.json(success("User created", newUser)))
+        User.create(user, level)
+            .then((newUser) => res.json(success((level === 0 ? "Master" : level === 1 ? "Admin" : "User") + " account created", newUser)))
             .catch(err => res.json(failure(err)));
+    },
+
+    // Creates admin account
+    createAdmin: (req, res) => {
+        res.locals.admin = true;
+        userController.create(req, res);
     },
 
     // Gets user list

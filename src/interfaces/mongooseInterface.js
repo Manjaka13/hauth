@@ -25,12 +25,12 @@ const mongoose = {
         .then((list) => list.map(mongooseFormat)),
 
     // Creates new user
-    createUser: (user, isMaster, hashedPassword, hashedEmail) => new User({
+    createUser: (user, level, hashedPassword, hashedEmail) => new User({
         ...user,
         email: user?.email?.toLowerCase(),
         app: user?.app?.toLowerCase(),
         password: hashedPassword,
-        level: isMaster ? 0 : 2,
+        level,
         status: 0,
         confirmationId: hashedEmail
     }).save()

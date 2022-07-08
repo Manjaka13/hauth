@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { hash, compare, removeProtectedFields } = require("../helpers/utils");
-const { master, tokenSecret } = require("../helpers/const");
+const { tokenSecret } = require("../helpers/const");
 const database = require("../interfaces/mongooseInterface");
 
 /*
@@ -9,16 +9,16 @@ const database = require("../interfaces/mongooseInterface");
 
 const userInterface = {
     // Creates new user
-    create: (user) => database.findUserList(user?.app)
+    create: (user, level) => database.findUserList(user?.app)
         .then(accountList => {
             accountList = accountList.filter((account) => account.level < 2);
             return accountList.length > 0;
         })
         .then((thereIsAdmin) => {
-            if (!thereIsAdmin)
-                throw "Regular accounts can't be created before admin accounts";
+            if (!thereIsAdmin && level === 2)
+                throw "Admin account must be created first";
             else
-                return database.findUser({ email: user?.email }, user?.app)
+                return database.findUser({ email: user?.email }, user?.app);
         })
         .then((exists) => {
             if (exists)
@@ -30,7 +30,7 @@ const userInterface = {
         })
         .then((hashedPassword) => {
             return hash(user.email)
-                .then((hashedEmail) => database.createUser(user, user.email === master, hashedPassword, hashedEmail))
+                .then((hashedEmail) => database.createUser(user, level, hashedPassword, hashedEmail))
                 .then(removeProtectedFields);
         }),
 
