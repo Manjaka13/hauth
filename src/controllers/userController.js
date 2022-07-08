@@ -127,7 +127,18 @@ const userController = {
             User.unban(id)
                 .then(() => res.json(success("User unbanned")))
                 .catch(err => res.json(failure(err)));
-    }
+    },
+
+    // Gets admin list on an app
+    getAdmin: (req, res) => {
+        const { app } = req.body;
+        if (!app)
+            res.json(failure("Please provide app name"));
+        else
+            User.getAdmin(app)
+                .then((accountList) => res.json(success("Admin list", accountList)))
+                .catch(err => res.json(failure(err)));
+    },
 };
 
 module.exports = userController;

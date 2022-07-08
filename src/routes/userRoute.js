@@ -7,6 +7,7 @@ const { isLoggedIn, isMaster, isConfirmed } = require("../middlewares/authMiddle
 */
 
 router.get("/get", isLoggedIn, isMaster, isConfirmed, User.getAll);
+router.get("/get/admin", User.getAdmin);
 router.post("/create", User.create);
 router.post("/create/admin", User.createAdmin);
 router.put("/update", isLoggedIn, isConfirmed, User.update);

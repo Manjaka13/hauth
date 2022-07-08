@@ -18,6 +18,14 @@ const documentation = {
         type: "GET",
         description: "Gets all accounts in master's app"
     },
+    "user/get/admin": {
+        access: "public, no login",
+        type: "GET",
+        description: "Gets provided app's admin list",
+        parameters: {
+            "app": "String, required"
+        }
+    },
     "user/create": {
         access: "public, no login",
         type: "POST",

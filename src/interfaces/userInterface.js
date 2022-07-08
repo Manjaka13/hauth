@@ -107,7 +107,11 @@ const userInterface = {
     ban: (id) => database.updateUser(id, { status: 2 }),
 
     // Unbans user
-    unban: (id) => database.updateUser(id, { status: 1 })
+    unban: (id) => database.updateUser(id, { status: 1 }),
+
+    // Gets admin list
+    getAdmin: (app) => database.findUserList(app)
+        .then((userList) => userList ? userList.filter((user) => user.level < 2).map((user) => removeProtectedFields(user)) : [])
 };
 
 module.exports = userInterface;
