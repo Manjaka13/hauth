@@ -81,6 +81,11 @@ const documentation = {
         access: "master, needs login",
         type: "PUT",
         description: "Bans the account"
+    },
+    "user/unban/:id": {
+        access: "master, needs login",
+        type: "PUT",
+        description: "Unbans the account"
     }
 };
 
