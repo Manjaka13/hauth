@@ -49,6 +49,15 @@ const documentation = {
         description: "Deletes user",
         node: "Can not self delete"
     },
+    "user/confirm/:id": {
+        access: "public, needs password",
+        type: "POST",
+        description: "Confirms user account",
+        parameters: {
+            "app": "String, required",
+            "password": "String, required"
+        },
+    },
     "login": {
         access: "public, no login",
         type: "POST",

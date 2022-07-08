@@ -1,4 +1,4 @@
-const { success, failure } = require("../helpers/utils");
+const { success, failure, compare } = require("../helpers/utils");
 const User = require("../interfaces/userInterface");
 
 /*
@@ -19,8 +19,8 @@ const userController = {
     },
 
     // Gets user list
-    get: (req, res) => {
-        User.get(res.locals.user.app)
+    getAll: (req, res) => {
+        User.getAll(res.locals.user.app)
             .then((accountList) => res.json(success("User list", accountList)))
             .catch(err => res.json(failure(err)));
     },
@@ -46,6 +46,22 @@ const userController = {
         else
             User.delete(id, app)
                 .then(() => res.json(success("User deleted")))
+                .catch(err => res.json(failure(err)));
+    },
+
+    // Confirms user account
+    confirm: (req, res) => {
+        const { id } = req.params;
+        const { app, password } = req.body;
+        if (!id)
+            res.json(failure("Please provide valid id"));
+        else if (!app)
+            res.json(failure("Please provide a valid app name"));
+        else if (!password)
+            res.json(failure("Please provide the password used to create this account"));
+        else
+            User.confirm(id, app, password)
+                .then(() => res.json(success("User account confirmed")))
                 .catch(err => res.json(failure(err)));
     }
 };

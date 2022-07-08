@@ -34,4 +34,15 @@ const isValidEmail = (email) => (
 		)
 );
 
-module.exports = { answer, success, failure, hash, compare, isValidEmail };
+// Returns only specific fields
+const formatUser = (user) => user ? ({ ...user._doc, id: user.id, _id: undefined, password: undefined }) : null;
+
+module.exports = {
+	answer,
+	success,
+	failure,
+	hash,
+	compare,
+	isValidEmail,
+	formatUser
+};

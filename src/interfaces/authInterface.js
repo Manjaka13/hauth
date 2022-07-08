@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/userModel");
-const { compare } = require("../helpers/utils");
+const database = require("../interfaces/mongooseInterface");
+const { formatUser, compare } = require("../helpers/utils");
 const { tokenSecret } = require("../helpers/const");
 
 /*
@@ -10,7 +10,7 @@ const { tokenSecret } = require("../helpers/const");
 const authInterface = {
     // Logs user in
     login: (email, password, app) => new Promise((resolve, reject) => {
-        User.findOne({ email, app })
+        database.findUser({ email }, app)
             .then((user) => {
                 if (!user)
                     throw "Invalid credentials";
@@ -20,15 +20,9 @@ const authInterface = {
                             if (!same)
                                 throw "Invalid password";
                             else {
-                                const formatedUser = {
-                                    ...user._doc,
-                                    id: user.id,
-                                    _id: undefined,
-                                    password: undefined,
-                                };
                                 resolve({
-                                    ...formatedUser,
-                                    token: jwt.sign({ ...formatedUser }, tokenSecret, { expiresIn: "1h" })
+                                    ...formatUser(user),
+                                    token: jwt.sign(formatUser(user), tokenSecret, { expiresIn: "1h" })
                                 });
                             }
                         })

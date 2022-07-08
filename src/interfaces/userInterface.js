@@ -1,6 +1,6 @@
 const { hash } = require("../helpers/utils");
 const { master } = require("../helpers/const");
-const database = require("./mongooseInterface");
+const database = require("../interfaces/mongooseInterface");
 
 /*
     Interfaces for Users
@@ -20,7 +20,11 @@ const userInterface = {
         .then((hashedPassword) => database.createUser(user, user.email === master, hashedPassword)),
 
     // Returns user list
-    get: (app) => database.findUserList(app),
+    getAll: (app) => database.findUserList(app),
+
+    // Returns user with provided id and app
+    get: (id, app) => database.findUserById(id)
+        .then((user) => user.app === app ? user : null),
 
     // Updates user info
     update: (id, user) => new Promise((resolve, reject) => {
@@ -40,7 +44,11 @@ const userInterface = {
     }),
 
     // Deletes user
-    delete: (id, app) => database.deleteUser(id, app)
+    delete: (id, app) => database.deleteUser(id, app),
+
+    // Confirm user accoutn
+    confirm: (id, app, password) => database.isCorrectPassword(id, app, password)
+        .then(() => database.updateUser(id, { status: 1 }))
 };
 
 module.exports = userInterface;
