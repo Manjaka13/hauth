@@ -76,6 +76,11 @@ const documentation = {
         parameters: {
             "token": "String, required"
         }
+    },
+    "user/ban/:id": {
+        access: "master, needs login",
+        type: "PUT",
+        description: "Bans the account"
     }
 };
 

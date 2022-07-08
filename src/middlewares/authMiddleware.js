@@ -43,8 +43,10 @@ const isMaster = (req, res, next) => {
 
 // Protects routes from unconfirmed accounts
 const isConfirmed = (req, res, next) => {
-    if (res.locals.user.status === 0)
+    if (res.locals.user.status === 1)
         next();
+    else if (res.locals.user.status === 2)
+        res.json(failure("This account is banned"));
     else
         res.json(failure("Please confirm your account first"));
 };

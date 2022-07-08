@@ -64,6 +64,10 @@ const userInterface = {
                 user = foundUser;
                 if (!user)
                     throw "Invalid credentials";
+                else if (user.status === 0)
+                    throw "Please confirm your account first";
+                else if (user.status === 2)
+                    throw "This account is banned";
                 else
                     return compare(password, user.password);
             })
@@ -88,6 +92,9 @@ const userInterface = {
                 resolve(removeProtectedFields(user));
         });
     }),
+
+    // Bans user
+    ban: (id) => database.updateUser(id, { status: 2 })
 };
 
 module.exports = userInterface;

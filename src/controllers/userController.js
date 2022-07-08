@@ -90,6 +90,20 @@ const userController = {
         User.verify(token)
             .then((user) => res.json(success("User logged in", user)))
             .catch(err => res.json(failure(err)));
+    },
+
+    // Bans an account
+    ban: (req, res) => {
+        const { id } = req.params;
+        if (!id)
+            res.json(failure("Please provide an id to ban"));
+        else if (id === res.locals.user.id)
+            res.json(failure("Unable to self ban :)"));
+        else
+            User.ban(id)
+                .then((user) => res.json(success("User banned")))
+                .catch(err => res.json(failure(err)));
+
     }
 };
 
