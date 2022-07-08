@@ -17,7 +17,10 @@ const userInterface = {
             else
                 return hash(user.password);
         })
-        .then((hashedPassword) => database.createUser(user, user.email === master, hashedPassword)),
+        .then((hashedPassword) => {
+            return hash(user.email)
+                .then((hashedEmail) => database.createUser(user, user.email === master, hashedPassword, hashedEmail));
+        }),
 
     // Returns user list
     getAll: (app) => database.findUserList(app),
@@ -47,8 +50,9 @@ const userInterface = {
     delete: (id, app) => database.deleteUser(id, app),
 
     // Confirm user accoutn
-    confirm: (id, app, password) => database.isCorrectPassword(id, app, password)
-        .then(() => database.updateUser(id, { status: 1 }))
+    confirm: (confirmationId, id, app, password) => database.isCorrectConfirmationId(id, confirmationId)
+        .then(() => database.isCorrectPassword(id, app, password))
+        .then(() => database.updateUser(id, { status: 1, confirmationId: null }))
 };
 
 module.exports = userInterface;

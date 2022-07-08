@@ -51,8 +51,8 @@ const userController = {
 
     // Confirms user account
     confirm: (req, res) => {
-        const { id } = req.params;
-        const { app, password } = req.body;
+        const { confirmationId } = req.params;
+        const { id, app, password } = req.body;
         if (!id)
             res.json(failure("Please provide valid id"));
         else if (!app)
@@ -60,7 +60,7 @@ const userController = {
         else if (!password)
             res.json(failure("Please provide the password used to create this account"));
         else
-            User.confirm(id, app, password)
+            User.confirm(confirmationId, id, app, password)
                 .then(() => res.json(success("User account confirmed")))
                 .catch(err => res.json(failure(err)));
     }

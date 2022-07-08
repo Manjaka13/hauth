@@ -24,13 +24,14 @@ const mongoose = {
         .then((list) => list.map((account) => formatUser(account))),
 
     // Creates new user
-    createUser: (user, isMaster, hashedPassword) => new User({
+    createUser: (user, isMaster, hashedPassword, hashedEmail) => new User({
         ...user,
         email: user?.email?.toLowerCase(),
         app: user?.app?.toLowerCase(),
         password: hashedPassword,
         level: isMaster ? 0 : 2,
-        status: 0
+        status: 0,
+        confirmationId: hashedEmail
     }).save()
         .then(formatUser),
 
@@ -57,6 +58,12 @@ const mongoose = {
         .then((same) => {
             if (!same)
                 throw "Password does not match account's password";
+        }),
+
+    isCorrectConfirmationId: (id, confirmationId) => User.findById(id)
+        .then((user) => {
+            if (user.confirmationId != confirmationId)
+                throw "Unknown confirmation link";
         })
 };
 

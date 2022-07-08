@@ -43,6 +43,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
+    },
+    confirmationId: {
+        type: String
     }
 }, {
     timestamps: true

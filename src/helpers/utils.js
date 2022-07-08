@@ -35,7 +35,7 @@ const isValidEmail = (email) => (
 );
 
 // Returns only specific fields
-const formatUser = (user) => user ? ({ ...user._doc, id: user.id, _id: undefined, password: undefined }) : null;
+const formatUser = (user) => user ? ({ ...user._doc, id: user.id, _id: undefined, password: undefined, confirmationId: undefined }) : null;
 
 module.exports = {
 	answer,
