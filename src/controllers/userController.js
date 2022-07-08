@@ -101,9 +101,21 @@ const userController = {
             res.json(failure("Unable to self ban :)"));
         else
             User.ban(id)
-                .then((user) => res.json(success("User banned")))
+                .then(() => res.json(success("User banned")))
                 .catch(err => res.json(failure(err)));
+    },
 
+    // Unbans an account
+    unban: (req, res) => {
+        const { id } = req.params;
+        if (!id)
+            res.json(failure("Please provide an id to unban"));
+        else if (id === res.locals.user.id)
+            res.json(failure("Unable to self unban :)"));
+        else
+            User.unban(id)
+                .then(() => res.json(success("User unbanned")))
+                .catch(err => res.json(failure(err)));
     }
 };
 

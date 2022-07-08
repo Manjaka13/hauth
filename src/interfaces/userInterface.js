@@ -94,7 +94,10 @@ const userInterface = {
     }),
 
     // Bans user
-    ban: (id) => database.updateUser(id, { status: 2 })
+    ban: (id) => database.updateUser(id, { status: 2 }),
+
+    // Unbans user
+    unban: (id) => database.updateUser(id, { status: 1 })
 };
 
 module.exports = userInterface;
