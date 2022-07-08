@@ -1,10 +1,15 @@
+const Mongoose = require("mongoose");
 const User = require("../models/userModel");
+const { databaseUrl, databaseName } = require("../helpers/const");
 
 /*
     Database manipulation through Mongoose
 */
 
 const mongoose = {
+    // Connects to MongoDB
+    connect: () => Mongoose.connect(`${databaseUrl}/${databaseName}`, { useNewUrlParser: true, useUnifiedTopology: true }),
+
     // Finds the user that meets the specified fields
     findUser: (researchFields, app) => User.findOne({ ...researchFields, app }),
 

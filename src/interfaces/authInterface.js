@@ -36,6 +36,7 @@ const authInterface = {
             })
             .catch((err) => reject(err));
     }),
+
     // Verifies token validity
     verifyToken: (token) => new Promise((resolve, reject) => {
         jwt.verify(token, tokenSecret, (err, user) => {

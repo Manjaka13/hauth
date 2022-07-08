@@ -1,15 +1,17 @@
 // Get env
 require("dotenv").config();
-// Require packages
+// Required external packages
 const Express = require("express");
 const cors = require("cors");
-const mongoose = require("mongoose");
+const database = require("./interfaces/mongooseInterface");
+const { port } = require("./helpers/const");
+// Routes
 const docRoute = require("./routes/docRoute");
 const userRoute = require("./routes/userRoute");
 const authRoute = require("./routes/authRoute");
+// Middlewares
 const jsonMiddleware = require("./middlewares/jsonMiddleware");
 const { authMiddleware } = require("./middlewares/authMiddleware");
-const { port, databaseUrl, databaseName } = require("./helpers/const");
 
 /*
     Server main entry
@@ -18,24 +20,24 @@ const { port, databaseUrl, databaseName } = require("./helpers/const");
 // Setup server
 const app = Express();
 
-// Middlewares
+// Apply middlewares
 app.use(cors());
 app.use(Express.urlencoded({ extended: true }));
 app.use(Express.json());
 app.use(jsonMiddleware);
 app.use(authMiddleware);
+
+// Setup routes
 app.use(docRoute.path, docRoute.router);
 app.use(userRoute.path, userRoute.router);
 app.use(authRoute.path, authRoute.router);
 
-// Get MongoDB ready
-const url = `${databaseUrl}/${databaseName}`;
-const options = { useNewUrlParser: true, useUnifiedTopology: true };
-mongoose.connect(url, options)
+// Connects to database
+database.connect()
     .then(() => {
-        console.log("Connected to database");
         // Awaiting for incoming request
         app.listen(port, () => {
             console.log(`HAuth running on port ${port}`);
         });
-    });
+    })
+    .catch(err => console.error(err));
