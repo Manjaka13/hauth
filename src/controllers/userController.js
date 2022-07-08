@@ -1,4 +1,4 @@
-const { success, failure } = require("../utils");
+const { success, failure } = require("../helpers/utils");
 const User = require("../interfaces/userInterface");
 
 /*

@@ -1,6 +1,6 @@
 const Auth = require("../interfaces/authInterface");
-const { success, failure } = require("../utils");
-const { isValidEmail } = require("../utils");
+const { success, failure } = require("../helpers/utils");
+const { isValidEmail } = require("../helpers/utils");
 
 /*
     Controller for authentication module

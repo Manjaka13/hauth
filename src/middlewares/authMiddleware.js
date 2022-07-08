@@ -1,4 +1,4 @@
-const { failure } = require("../utils");
+const { failure } = require("../helpers/utils");
 const { verifyToken } = require("../interfaces/authInterface");
 
 // Validates token to user object

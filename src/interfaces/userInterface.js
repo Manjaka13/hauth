@@ -1,4 +1,4 @@
-const { hash } = require("../utils");
+const { hash } = require("../helpers/utils");
 const { master } = require("../helpers/const");
 const database = require("./mongooseInterface");
 

@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { documentation } = require("../helpers/const");
-const { success } = require("../utils");
+const { success } = require("../helpers/utils");
 
 /*
     Route for API documentation

@@ -1,4 +1,4 @@
-const { failure } = require("../utils");
+const { failure } = require("../helpers/utils");
 
 // Handle JSON errors properly
 const jsonMiddleware = (err, req, res, next) => {
