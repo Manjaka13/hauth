@@ -32,8 +32,17 @@ const isMaster = (req, res, next) => {
         res.json(failure("You need to be MASTER to access this route"));
 };
 
+// Protects routes from unconfirmed accounts
+const isConfirmed = (req, res, next) => {
+    if (res.locals.user.status === 0)
+        next();
+    else
+        res.json(failure("Please confirm your account first"));
+};
+
 module.exports = {
     authMiddleware,
     isLoggedIn,
-    isMaster
+    isMaster,
+    isConfirmed
 };
