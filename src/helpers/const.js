@@ -11,12 +11,12 @@ const documentation = {
     "/": {
         access: "public, no login",
         type: "GET",
-        description: "Displays exhaustive list of all API routes and their parameters."
+        description: "The current API documentation."
     },
     "user/get": {
         access: "master, needs login",
         type: "GET",
-        description: "Gets all user list"
+        description: "Gets all accounts in master's app"
     },
     "user/create": {
         access: "public, no login",
@@ -46,7 +46,8 @@ const documentation = {
     "user/delete/:id": {
         access: "master, needs login",
         type: "DELETE",
-        description: "Deletes user"
+        description: "Deletes user",
+        node: "Can not self delete"
     },
     "login": {
         access: "public, no login",
