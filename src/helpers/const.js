@@ -31,6 +31,19 @@ const documentation = {
             "app": "String, required"
         }
     },
+    "user/create/admin": {
+        access: "public, no login",
+        type: "POST",
+        description: "Creates admin user",
+        parameters: {
+            "firstname": "String",
+            "lastname": "String",
+            "avatar": "String",
+            "email": "String, required",
+            "password": "String, required",
+            "app": "String, required"
+        }
+    },
     "user/update": {
         access: "public, needs login",
         type: "PUT",
