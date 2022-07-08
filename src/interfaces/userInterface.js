@@ -9,7 +9,17 @@ const database = require("../interfaces/mongooseInterface");
 
 const userInterface = {
     // Creates new user
-    create: (user) => database.findUser({ email: user?.email }, user?.app)
+    create: (user) => database.findUserList(user?.app)
+        .then(accountList => {
+            accountList = accountList.filter((account) => account.level < 2);
+            return accountList.length > 0;
+        })
+        .then((thereIsAdmin) => {
+            if (!thereIsAdmin)
+                throw "Regular accounts can't be created before admin accounts";
+            else
+                return database.findUser({ email: user?.email }, user?.app)
+        })
         .then((exists) => {
             if (exists)
                 throw "This account already exist";
