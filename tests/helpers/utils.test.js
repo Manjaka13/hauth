@@ -62,4 +62,5 @@ describe("helpers/utils.js", () => {
         expect(isAdmin(data6)).not.toBeTruthy();
         expect(isAdmin(data7)).not.toBeTruthy();
     });
+
 });

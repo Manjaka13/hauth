@@ -15,7 +15,6 @@ const response = {
     failure: (caption, payload) => {
         const defaultMessage = "An error occured";
         const err = caption?._message ? caption._message : typeof caption === "string" ? caption : defaultMessage;
-        console.error(caption);
         return response.answer(err, payload);
     },
 
