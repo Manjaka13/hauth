@@ -153,7 +153,22 @@ const accountController = {
             Account.delete({ email, app })
                 .then(() => res.json(success("Account deleted")))
                 .catch(err => res.json(failure(err)));
-    }
+    },
+
+    // Updates user data
+    update(req, res) {
+        const account = req.body;
+        account.id = res.locals.account.id;
+        if (account.email || account.level || account.app || account.banned || account.confirmationId)
+            res.json(failure("Some fields are immutable and could not be updated"));
+        else
+            Account.update(account)
+                .then(() => res.json(success("Account information updated")))
+                .catch(err => {
+                    console.log(err);
+                    res.json(failure(err));
+                });
+    },
 };
 
 module.exports = accountController;

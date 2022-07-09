@@ -56,7 +56,10 @@ const mongoose = {
 
     // Deletes account
     delete: (account) => Account.findOne({ email: account.email, app: account.app })
-        .deleteOne()
+        .deleteOne(),
+
+    // Updates user data
+    updateAccount: (id, data) => Account.findById(id).updateOne(data),
 };
 
 module.exports = mongoose;

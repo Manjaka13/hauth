@@ -87,6 +87,15 @@ module.exports = (database, jwt) => {
         unban: (account) => database.setAccountBan(account, false),
 
         // Deletes account
-        delete: (account) => database.delete(account)
+        delete: (account) => database.delete(account),
+
+        // Updates user info
+        update: (account) => hash(account.password || "foo")
+            .then(hashedPassword => {
+                if (account.password)
+                    return database.updateAccount(account.id, { ...account, password: hashedPassword, id: undefined });
+                else
+                    return database.updateAccount(account.id, account);
+            })
     };
 };

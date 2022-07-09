@@ -22,5 +22,6 @@ router.post("/verify", Account.verify);
 router.put("/ban", mustBeLoggedIn, isAdmin, isConfirmed, Account.ban);
 router.put("/unban", mustBeLoggedIn, isAdmin, isConfirmed, Account.unban);
 router.delete("/delete", mustBeLoggedIn, isAdmin, isConfirmed, Account.delete);
+router.put("/update", mustBeLoggedIn, isConfirmed, Account.update);
 
 module.exports = { path: "/", router };
