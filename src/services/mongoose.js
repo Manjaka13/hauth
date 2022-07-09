@@ -1,13 +1,15 @@
 const Mongoose = require("mongoose");
 const Account = require("../models/account");
-const { databaseUrl, databaseName } = require("../helpers/const");
-const { mongooseFormat, compare } = require("../helpers/utils");
+const {
+    databaseUrl,
+    databaseName
+} = require("../helpers/const");
 
 /*
     Mongoose database service
 */
 
-const mongoose = {
+module.exports = {
     // Connects to MongoDB
     connect: () => Mongoose.connect(`${databaseUrl}/${databaseName}`, {
         useNewUrlParser: true,
@@ -15,51 +17,20 @@ const mongoose = {
     }),
 
     // Finds the account with provided email or id and app
-    getAccount: (account) => Account.findOne({ email: account.email, app: account.app })
-        .then(mongooseFormat),
+    getAccount: (app, email) => Account.findOne({ app, email }),
 
     // Get all accounts associated with that app
-    getAccountList: (app) => Account.find({ app })
-        .then((accountList) => accountList && accountList.length > 0 ? accountList.map((account) => mongooseFormat(account)) : null),
+    getAccountList: (app) => Account.find({ app }).then((list) => list.length > 0 ? list : null),
 
     // Creates new account
-    createAccount: (account) => new Account(account).save()
-        .then(mongooseFormat),
+    createAccount: (data) => new Account(data).save(),
 
     // Updates account data
-    updateAccount: (account) => Account.findOne({ email: account.email, app: account.app })
-        .updateOne({ ...account, email: undefined, app: undefined })
-        .then(mongooseFormat),
+    updateAccount: (account, data) => account.updateOne(data),
 
     // Deletes account
-    deleteAccount: (account) => Account.findOne({ email: account.email, app: account.app })
-        .deleteOne(),
+    deleteAccount: (account) => account.deleteOne(),
 
-    // Confirms account
-    confirmAccount: (account) => Account.findOne({ app: account.app, confirmationId: account.confirmationId })
-        .then((found) => {
-            if (!found)
-                throw "Invalid confirmation id";
-            else
-                return compare(account.password, found.password)
-                    .then((same) => {
-                        if (!same)
-                            throw "Password does not match the account's password";
-                        else
-                            return found.updateOne({ confirmationId: "" });
-                    });
-        }),
-
-    // Manage bans
-    setAccountBan: (account, ban) => Account.findOne({ email: account.email, app: account.app })
-        .updateOne({ banned: ban }),
-
-    // Deletes account
-    delete: (account) => Account.findOne({ email: account.email, app: account.app })
-        .deleteOne(),
-
-    // Updates user data
-    updateAccount: (id, data) => Account.findById(id).updateOne(data),
+    // Gets the owner of given confirmation id
+    getConfirmationIdOwner: (confirmationId) => Account.findOne({ confirmationId }),
 };
-
-module.exports = mongoose;

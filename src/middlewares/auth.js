@@ -1,5 +1,6 @@
 const database = require("../services/mongoose");
-const { failure, removeProtectedFields, isAdmin } = require("../helpers/utils");
+const { failure } = require("../services/response");
+const { isAdmin } = require("../helpers/utils");
 const Account = require("../services/account")(database);
 
 /*
@@ -13,15 +14,14 @@ module.exports = (jwt) => ({
         if (token)
             token = token.replace("Bearer ", "");
         jwt.verify(token)
-            .then(Account.get)
-            .then(removeProtectedFields)
+            .then(({ app, email }) => Account.get(app, email))
             .then((account) => {
                 res.locals.account = account;
             })
             .catch(() => {
                 res.locals.account = null;
             })
-            .finally(() => next())
+            .finally(next);
     },
 
     // Checks if account were banned

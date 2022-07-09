@@ -8,6 +8,8 @@ const databaseName = process.env.DATABASE_NAME;
 const masterEmail = process.env.MASTER || "manjaka.rajaonson@gmail.com";
 const tokenSecret = process.env.TOKEN_SECRET;
 const tokenExpiration = process.env.TOKEN_EXPIRATION || "1h";
+const hashSaltRounds = 10;
+const accountType = ["Master", "Admin", "User"];
 const documentation = {
     "/": {
         access: "public, no login",
@@ -118,5 +120,7 @@ module.exports = {
     databaseName,
     documentation,
     tokenSecret,
-    tokenExpiration
+    tokenExpiration,
+    hashSaltRounds,
+    accountType
 };

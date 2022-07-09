@@ -1,14 +1,8 @@
-const {
-    success,
-    failure,
-    isValidEmail,
-    isValidPassword,
-    isValidAppName,
-    removeProtectedFields
-} = require("../helpers/utils");
-const { masterEmail } = require("../helpers/const");
-const database = require("../services/mongoose");
+const { success, failure } = require("../services/response");
+const validation = require("../services/validation");
+const { masterEmail, accountType } = require("../helpers/const");
 const jwt = require("../services/jwt");
+const database = require("../services/mongoose");
 const Account = require("../services/account")(database, jwt);
 
 /*
@@ -19,15 +13,14 @@ const accountController = {
     // Creates new account
     create: (req, res) => {
         const account = req.body;
-        const type = ["Master", "Admin", "User"];
         try {
             if (!account || Object.keys(account).length === 0)
                 throw "Please provide account information";
-            else if (!isValidEmail(account.email))
+            else if (!validation.email(account.email))
                 throw "Email is invalid";
-            else if (!isValidPassword(account.password))
+            else if (!validation.password(account.password))
                 throw "Insufficient password strength";
-            else if (!isValidAppName(account.app))
+            else if (!validation.name(account.app))
                 throw "App name is invalid";
             delete account.id;
             delete account.__id;
@@ -42,9 +35,9 @@ const accountController = {
                 account.level = 0;
             else if (res.locals.admin)
                 account.level = 1;
+
             Account.create(account)
-                .then(removeProtectedFields)
-                .then(() => res.json((success(`${type[account.level]} account created`))))
+                .then((account) => res.json((success(`${accountType[account.level]} account created`, account))))
                 .catch(err => res.json(failure(err)));
         } catch (err) {
             res.json(failure(err));
@@ -60,26 +53,30 @@ const accountController = {
     // Get list of admin in provided app
     getAdminList: (req, res) => {
         const { app } = req.body;
-        if (!app)
-            res.json(failure("Please provide app name"));
-        else
+        try {
+            if (!validation.name(app))
+                throw "Please provide app name";
+
             Account.getAdminList(app)
-                .then((accountList) => accountList.map(removeProtectedFields))
-                .then((accountList) => res.json(success("Account list", accountList)))
+                .then((list) => res.json(success("Admin account list", list)))
                 .catch(err => res.json(failure(err)));
+        } catch (err) {
+            res.json(failure(err));
+        }
     },
 
     // Logs user in
     login: (req, res) => {
         const { email, password, app } = req.body;
         try {
-            if (!isValidEmail(email))
+            if (!validation.email(email))
                 throw "Email is invalid";
-            else if (!isValidPassword(password))
+            else if (!validation.password(password))
                 throw "Insufficient password strength";
-            else if (!isValidAppName(app))
+            else if (!validation.name(app))
                 throw "App name is invalid";
-            Account.login({ email, password, app })
+
+            Account.login(app, email, password)
                 .then((account) => res.json(success("Logged in successfully", account)))
                 .catch(err => res.json(failure(err)));
         } catch (err) {
@@ -89,17 +86,19 @@ const accountController = {
 
     // Confirms account
     confirm: (req, res) => {
-        const { confirmationId, app, password } = req.body;
-        if (!isValidAppName(app))
-            res.json(failure("App name is invalid"));
-        else if (!confirmationId)
-            res.json(failure("Please provide the confirmation id"));
-        else if (!isValidPassword(password))
-            res.json(failure("Please provide a valid password"));
-        else
-            Account.confirm({ app, confirmationId, password })
+        const { confirmationId, password } = req.body;
+        try {
+            if (!confirmationId)
+                throw "Please provide the confirmation id";
+            else if (!validation.password(password))
+                throw "Please provide a valid password";
+
+            Account.confirm(confirmationId, password)
                 .then(() => res.json(success("Account confirmed")))
                 .catch(err => res.json(failure(err)));
+        } catch (err) {
+            res.json(failure(err));
+        }
     },
 
     // Verifies incoming token
@@ -112,62 +111,80 @@ const accountController = {
 
     // Bans account
     ban: (req, res) => {
-        const { email, app } = req.body;
-        if (!isValidEmail(email))
-            res.json(failure("Please provide a valid email"));
-        else if (!isValidAppName(app))
-            res.json(failure("Please provide a valid app name"));
-        else if (email === res.locals.account.email)
-            res.json(failure("Can not ban yourself :)"));
-        else
-            Account.ban({ email, app })
+        const { app, email } = req.body;
+        try {
+            if (!validation.email(email))
+                throw "Please provide a valid email";
+            else if (!validation.name(app))
+                throw "Please provide a valid app name";
+            else if (email === res.locals.account.email && app === res.locals.account.app)
+                throw "Can not self ban";
+
+            Account.ban(app, email)
                 .then(() => res.json(success("Account banned")))
                 .catch(err => res.json(failure(err)));
+        } catch (err) {
+            res.json(failure(err));
+        }
     },
 
     // Unbans account
     unban: (req, res) => {
-        const { email, app } = req.body;
-        if (!isValidEmail(email))
-            res.json(failure("Please provide a valid email"));
-        else if (!isValidAppName(app))
-            res.json(failure("Please provide a valid app name"));
-        else if (email === res.locals.account.email)
-            res.json(failure("Can not self unban :)"));
-        else
-            Account.unban({ email, app })
+        const { app, email } = req.body;
+        try {
+            if (!validation.email(email))
+                throw "Please provide a valid email";
+            else if (!validation.name(app))
+                throw "Please provide a valid app name";
+            else if (email === res.locals.account.email && app === res.locals.account.app)
+                throw "Can not unban self";
+
+            Account.unban(app, email)
                 .then(() => res.json(success("Ban removed from account")))
                 .catch(err => res.json(failure(err)));
+        } catch (err) {
+            res.json(failure(err));
+        }
     },
 
     // Unbans account
     delete: (req, res) => {
-        const { email, app } = req.body;
-        if (!isValidEmail(email))
-            res.json(failure("Please provide a valid email"));
-        else if (!isValidAppName(app))
-            res.json(failure("Please provide a valid app name"));
-        else if (email === res.locals.account.email)
-            res.json(failure("Can not self delete :)"));
-        else
-            Account.delete({ email, app })
+        const { app, email } = req.body;
+        try {
+            if (!validation.email(email))
+                throw "Please provide a valid email";
+            else if (!validation.name(app))
+                throw "Please provide a valid app name";
+            else if (email === res.locals.account.email && app === res.locals.account.app)
+                throw "Can not delete self";
+
+            Account.delete(app, email)
                 .then(() => res.json(success("Account deleted")))
                 .catch(err => res.json(failure(err)));
+        } catch (err) {
+            res.json(failure(err));
+        }
     },
 
     // Updates user data
     update(req, res) {
+        const { app, email } = res.locals.account;
         const account = req.body;
-        account.id = res.locals.account.id;
-        if (account.email || account.level || account.app || account.banned || account.confirmationId)
-            res.json(failure("Some fields are immutable and could not be updated"));
-        else
-            Account.update(account)
+        try {
+            if (!validation.email(email) || !validation.name(app))
+                throw "Please login";
+            delete account.app;
+            delete account.email;
+            delete account.level;
+            delete account.banned;
+            delete account.confirmationId;
+
+            Account.update(app, email, account)
                 .then(() => res.json(success("Account information updated")))
-                .catch(err => {
-                    console.log(err);
-                    res.json(failure(err));
-                });
+                .catch(err => res.json(failure(err)));
+        } catch (err) {
+            res.json(failure(err));
+        }
     },
 };
 

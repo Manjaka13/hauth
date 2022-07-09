@@ -1,6 +1,6 @@
 # HAuth
 
-Authenticates third party apps.
+Authenticates apps
 
 ### Project setup
 
@@ -36,6 +36,12 @@ npm run format
 
 ```
 npm run lint
+```
+
+### Run tests
+
+```
+npm run test
 ```
 
 </br></br>

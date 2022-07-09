@@ -1,5 +1,13 @@
 const { v4 } = require("uuid");
-const { isAdmin, hash, compare, removeProtectedFields } = require("../helpers/utils");
+const {
+    filterAdmin,
+    isAdmin,
+    formatData,
+    formatDataList,
+    protectData,
+    protectDataList
+} = require("../helpers/utils");
+const { hash, passwordMatch } = require("./crypt");
 
 /*
     Account service
@@ -8,94 +16,139 @@ const { isAdmin, hash, compare, removeProtectedFields } = require("../helpers/ut
 module.exports = (database, jwt) => {
     return {
         // Creates new account
-        create: (account) => database.getAccountList(account.app)
-            .then((accountList) => accountList?.filter(isAdmin))
-            .then(adminAccountList => {
-                if (!adminAccountList && !isAdmin(account))
+        create: (data) => database.getAccountList(data.app)
+            .then(filterAdmin)
+            .then((adminExist) => {
+                if (!adminExist && !isAdmin(data))
                     throw "You have to create an admin account on that app first";
                 else
-                    return database.getAccount(account);
+                    return database.getAccount(data.app, data.email);
             })
             .then((exist) => {
                 if (exist)
                     throw `${exist.email} already has an account on that app`;
                 else
-                    return hash(account.password);
+                    return hash(data.password);
             })
             .then((hashedPassword) => {
-                account.password = hashedPassword;
-                account.confirmationId = v4();
-                return database.createAccount(account);
-            }),
+                data.password = hashedPassword;
+                data.confirmationId = v4();
+                return database.createAccount(data);
+            })
+            .then(formatData)
+            .then(protectData),
 
-        // Get associated account
-        get: (account) => new Promise((resolve, reject) => {
-            if (!account || !account.email || !account.app)
-                reject("Unexisting account");
-            else
-                database.getAccount(account)
-                    .then((account) => resolve(account))
-                    .catch(err => reject(err));
-        }),
+        // Get the account associated to this email
+        get: (app, email) => database.getAccount(app, email)
+            .then((found) => {
+                if (!found)
+                    throw `${email} is associated to no account`;
+                else
+                    return found;
+            })
+            .then(formatData)
+            .then(protectData),
 
         // Gets list of admin
         getAdminList: (app) => database.getAccountList(app)
-            .then((accountList) => {
-                if (!accountList)
-                    throw "That app has no admin or does not exist yet";
+            .then(filterAdmin)
+            .then(list => {
+                if (!list)
+                    throw "No admin account found";
                 else
-                    return accountList.filter((account) => account.level < 2);
-            }),
+                    return list;
+            })
+            .then(formatDataList)
+            .then(protectDataList),
 
         // Login
-        login: (account) => {
-            let user = null;
-            return database.getAccount(account)
-                .then((found) => {
-                    if (!found)
-                        throw `${account.email} does not have an account yet`;
-                    else if (found.banned)
-                        throw `${account.email} was banned`;
-                    else if (found.confirmationId)
+        login: (app, email, password) => {
+            let targetAccount = null;
+            return database.getAccount(app, email)
+                .then((account) => {
+                    if (!account)
+                        throw `${email} is associated to no account`;
+                    else if (account.banned)
+                        throw `${email} was banned`;
+                    else if (account.confirmationId)
                         throw "Please confirm your email first";
                     else {
-                        user = found;
-                        return compare(account.password, user.password);
+                        targetAccount = account;
+                        return passwordMatch(password, targetAccount.password);
                     }
                 })
-                .then((samePassword) => {
-                    if (!samePassword)
-                        throw "Wrong password";
-                    else {
-                        user = removeProtectedFields(user);
-                        return jwt.create(user);
-                    }
+                .then(() => formatData(targetAccount))
+                .then(protectData)
+                .then((formatedData) => {
+                    targetAccount = formatedData;
+                    return jwt.create(formatedData);
                 })
                 .then((token) => {
-                    user.token = token;
-                    return user;
+                    targetAccount.token = token;
+                    return targetAccount;
                 })
         },
 
         // Confirm account
-        confirm: (account) => database.confirmAccount({ app: account.app, confirmationId: account.confirmationId, password: account.password }),
+        confirm: (confirmationId, password) => {
+            let owner = null;
+            return database.getConfirmationIdOwner(confirmationId)
+                .then((account) => {
+                    if (!account)
+                        throw "Unknown confirmation id";
+                    else {
+                        owner = account;
+                        return passwordMatch(password, account.password);
+                    }
+                })
+                .then(() => database.updateAccount(owner, { confirmationId: "" }))
+        },
 
         // Bans account
-        ban: (account) => database.setAccountBan(account, true),
+        ban: (app, email) => database.getAccount(app, email)
+            .then((account) => {
+                if (!account)
+                    throw `${email} is associated to no account`;
+                else
+                    return database.updateAccount(account, { banned: true });
+            }),
 
         // Unbans account
-        unban: (account) => database.setAccountBan(account, false),
+        unban: (app, email) => database.getAccount(app, email)
+            .then((account) => {
+                if (!account)
+                    throw `${email} is associated to no account`;
+                else
+                    return database.updateAccount(account, { banned: false });
+            }),
 
         // Deletes account
-        delete: (account) => database.delete(account),
-
-        // Updates user info
-        update: (account) => hash(account.password || "foo")
-            .then(hashedPassword => {
-                if (account.password)
-                    return database.updateAccount(account.id, { ...account, password: hashedPassword, id: undefined });
+        delete: (app, email) => database.getAccount(app, email)
+            .then((account) => {
+                if (!account)
+                    throw `${email} is associated to no account`;
                 else
-                    return database.updateAccount(account.id, account);
-            })
+                    return database.deleteAccount(account);
+            }),
+
+        // Updates account data
+        update: (app, email, data) => {
+            let targetAccount = null;
+            return database.getAccount(app, email)
+                .then((account) => {
+                    if (!account)
+                        throw `${email} is associated to no account`;
+                    else {
+                        targetAccount = account;
+                        return hash(data.password || "foo");
+                    }
+                })
+                .then((hashedPassword) => {
+                    if (data.password)
+                        return database.updateAccount(targetAccount, { ...data, password: hashedPassword });
+                    else
+                        return database.updateAccount(targetAccount, data);
+                });
+        },
     };
 };

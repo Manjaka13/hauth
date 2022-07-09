@@ -1,4 +1,4 @@
-const { failure } = require("../helpers/utils");
+const { failure } = require("../services/response");
 
 // Handle JSON errors properly
 const jsonCheck = (err, req, res, next) => {
