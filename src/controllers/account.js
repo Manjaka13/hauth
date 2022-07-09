@@ -89,13 +89,15 @@ const accountController = {
 
     // Confirms account
     confirm: (req, res) => {
-        const { confirmationId, app } = req.body;
+        const { confirmationId, app, password } = req.body;
         if (!isValidAppName(app))
             res.json(failure("App name is invalid"));
         else if (!confirmationId)
             res.json(failure("Please provide the confirmation id"));
+        else if (!isValidPassword(password))
+            res.json(failure("Please provide a valid password"));
         else
-            Account.confirm(app, confirmationId)
+            Account.confirm({ app, confirmationId, password })
                 .then(() => res.json(success("Account confirmed")))
                 .catch(err => res.json(failure(err)));
     },

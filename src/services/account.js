@@ -78,7 +78,7 @@ module.exports = (database, jwt) => {
         },
 
         // Confirm account
-        confirm: (app, confirmationId) => database.confirmAccount({ app, confirmationId }),
+        confirm: (account) => database.confirmAccount({ app: account.app, confirmationId: account.confirmationId, password: account.password }),
 
         // Bans account
         ban: (account) => database.setAccountBan(account, true),

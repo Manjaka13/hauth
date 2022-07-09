@@ -1,7 +1,7 @@
 const Mongoose = require("mongoose");
 const Account = require("../models/account");
 const { databaseUrl, databaseName } = require("../helpers/const");
-const { mongooseFormat } = require("../helpers/utils");
+const { mongooseFormat, compare } = require("../helpers/utils");
 
 /*
     Mongoose database service
@@ -41,7 +41,13 @@ const mongoose = {
             if (!found)
                 throw "Invalid confirmation id";
             else
-                return found.updateOne({ confirmationId: "" });
+                return compare(account.password, found.password)
+                    .then((same) => {
+                        if (!same)
+                            throw "Password does not match the account's password";
+                        else
+                            return found.updateOne({ confirmationId: "" });
+                    });
         }),
 
     // Manage bans
