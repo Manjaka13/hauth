@@ -33,11 +33,11 @@ const protectData = (data) => {
 // Protects array of data
 const protectDataList = (dataList) => dataList.map(protectData);
 
-// Filters those who are admins
-const filterAdmin = (dataList) => dataList ? dataList.filter(isAdmin) : dataList;
-
 // Checks if account is admin
 const isAdmin = (account) => account ? (account?.level >= 0 && account?.level < 2) : false;
+
+// Filters those who are admins
+const filterAdmin = (dataList) => dataList ? dataList.filter(isAdmin) : dataList;
 
 module.exports = {
 	protectData,
