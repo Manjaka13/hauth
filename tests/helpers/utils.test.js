@@ -30,44 +30,6 @@ describe("helpers/utils.js", () => {
         expect(failure(123)).toEqual({ caption: "An error occured", status: 0 });
     });
 
-    test("hash", () => {
-        const str = "123";
-        let hashed = "";
-        hash(str)
-            .then((hashedStr) => {
-                hashed = hashedStr;
-                return bcrypt.hash(str);
-            })
-            .then((hashedStr) => {
-                expect(hashed).toBe(hashedStr);
-            });
-        hash(str)
-            .then((hashedStr) => {
-                hashed = hashedStr;
-                return bcrypt.hash(str + "4");
-            })
-            .then((hashedStr) => {
-                expect(hashed).not.toBe(hashedStr);
-            });
-        hash()
-            .catch((err) => {
-                expect(err).toBe("Please provide a string to hash");
-            });
-    });
-
-    test("compare", () => {
-        const originalStr = "123";
-        const hashed = "";
-        hash(originalStr)
-            .then((hashedStr) => {
-                hashed = hashedStr;
-                return compare(originalStr, hashed);
-            })
-            .then((same) => {
-                expect(same).toBe(true);
-            })
-    });
-
     test("isValidEmail", () => {
         expect(isValidEmail("test@gmail.com")).toBeTruthy();
         expect(isValidEmail("a@a.co")).toBeTruthy();
