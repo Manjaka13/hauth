@@ -41,20 +41,7 @@ const isValidPassword = (password) => typeof password === "string" && password.l
 const isValidAppName = (app) => typeof app === "string" && app.length > 2;
 
 // Format mongoose data
-const mongooseFormat = (user) => {
-	if (!Array.isArray(user) && typeof user === "object") {
-		if (user._doc) {
-			user = { ...user._doc };
-			user.id = user._id;
-			delete user._id;
-			delete user.__v;
-			delete user.createdAt;
-			delete user.updatedAt;
-		}
-		return user;
-	}
-	return null;
-};
+const mongooseFormat = (user) => user ? ({ ...user._doc, id: user.id, _id: undefined }) : null;
 
 // Returns only specific fields
 const removeProtectedFields = (user) => {

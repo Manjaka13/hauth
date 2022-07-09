@@ -45,9 +45,7 @@ const accountController = {
             Account.create(account)
                 .then(removeProtectedFields)
                 .then(() => res.json((success(`${type[account.level]} account created`))))
-                .catch(err => {
-                    res.json(failure(err));
-                });
+                .catch(err => res.json(failure(err)));
         } catch (err) {
             res.json(failure(err));
         }
@@ -87,6 +85,19 @@ const accountController = {
         } catch (err) {
             res.json(failure(err));
         }
+    },
+
+    // Confirms account
+    confirm: (req, res) => {
+        const { confirmationId, app } = req.body;
+        if (!isValidAppName(app))
+            res.json(failure("App name is invalid"));
+        else if (!confirmationId)
+            res.json(failure("Please provide the confirmation id"));
+        else
+            Account.confirm(app, confirmationId)
+                .then(() => res.json(success("Account confirmed")))
+                .catch(err => res.json(failure(err)));
     }
 };
 

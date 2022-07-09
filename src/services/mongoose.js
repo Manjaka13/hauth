@@ -33,7 +33,16 @@ const mongoose = {
 
     // Deletes account
     deleteAccount: (account) => Account.findOne({ email: account.email, app: account.app })
-        .deleteOne()
+        .deleteOne(),
+
+    // Confirms account
+    confirmAccount: (account) => Account.findOne({ app: account.app, confirmationId: account.confirmationId })
+        .then((found) => {
+            if (!found)
+                throw "Invalid confirmation id";
+            else
+                return found.updateOne({ confirmationId: "" });
+        })
 };
 
 module.exports = mongoose;

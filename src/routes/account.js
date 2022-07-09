@@ -14,5 +14,6 @@ router.post("/create", mustBeLoggedOut, Account.create);
 router.post("/create/admin", mustBeLoggedOut, Account.createAdmin);
 router.get("/get/admin", Account.getAdminList);
 router.post("/login", shouldBeLoggedOut, Account.login);
+router.post("/confirm", shouldBeLoggedOut, Account.confirm);
 
 module.exports = { path: "/", router };

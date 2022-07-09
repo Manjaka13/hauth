@@ -1,4 +1,4 @@
-const { tokenSecret, tokenExpiration } = require("../helpers/const");
+const { v4 } = require("uuid");
 const { isAdmin, hash, compare, removeProtectedFields } = require("../helpers/utils");
 
 /*
@@ -24,10 +24,7 @@ module.exports = (database, jwt) => {
             })
             .then((hashedPassword) => {
                 account.password = hashedPassword;
-                return hash(account.email);
-            })
-            .then((hashedEmail) => {
-                account.confirmationId = hashedEmail;
+                account.confirmationId = v4();
                 return database.createAccount(account);
             }),
 
@@ -78,6 +75,9 @@ module.exports = (database, jwt) => {
                     user.token = token;
                     return user;
                 })
-        }
+        },
+
+        // Confirm account
+        confirm: (app, confirmationId) => database.confirmAccount({ app, confirmationId })
     };
 };
