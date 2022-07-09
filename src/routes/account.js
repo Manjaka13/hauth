@@ -9,6 +9,6 @@ const { isNotConnected } = require("../middlewares/auth")(jwt);
 
 router.post("/create", isNotConnected, Account.create);
 router.post("/create/admin", isNotConnected, Account.createAdmin);
-router.post("/get/admin", Account.getAdminList);
+router.get("/get/admin", Account.getAdminList);
 
 module.exports = { path: "/", router };

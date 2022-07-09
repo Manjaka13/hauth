@@ -66,6 +66,7 @@ const accountController = {
         else
             Account.getAdminList(app)
                 .then((accountList) => accountList.map(removeProtectedFields))
+                .then((accountList) => res.json(success("Account list", accountList)))
                 .catch(err => res.json(failure(err)));
     }
 };
