@@ -13,7 +13,7 @@ const answer = (caption, payload, status) => ({
 });
 
 // Returns catched error
-const failure = (err) => answer(err?._message ? err._message : typeof err === "string" ? err : "An error occured");
+const failure = (err, payload) => answer(err?._message ? err._message : typeof err === "string" ? err : "An error occured", payload);
 
 // Returns good answer
 const success = (caption, payload) => answer(caption, payload, 1);

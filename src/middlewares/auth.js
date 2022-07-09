@@ -1,5 +1,5 @@
 const database = require("../services/mongoose");
-const { failure, removeProtectedFields } = require("../helpers/utils");
+const { failure, removeProtectedFields, isAdmin } = require("../helpers/utils");
 const Account = require("../services/account")(database);
 
 /*
@@ -27,7 +27,7 @@ module.exports = (jwt) => ({
     // Checks if account were banned
     checkBannedAccount: (req, res, next) => {
         if (res.locals.account && res.locals.account.banned)
-            res.json(failure("This account have been banned"));
+            res.json(failure("This account have been banned", res.locals.account));
         else
             next();
     },
@@ -62,5 +62,13 @@ module.exports = (jwt) => ({
             next();
         else
             res.json(failure("Please confirm your account first"));
+    },
+
+    // Checks if user is admin
+    isAdmin: (req, res, next) => {
+        if (isAdmin(res.locals.account))
+            next();
+        else
+            res.json(failure("You have to be admin to access this route"));
     }
 });

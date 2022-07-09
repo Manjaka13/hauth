@@ -106,6 +106,36 @@ const accountController = {
             res.json(success("User logged in", res.locals.account));
         else
             res.json(failure("User not logged in"));
+    },
+
+    // Bans account
+    ban: (req, res) => {
+        const { email, app } = req.body;
+        if (!isValidEmail(email))
+            res.json(failure("Please provide a valid email"));
+        else if (!isValidAppName(app))
+            res.json(failure("Please provide a valid app name"));
+        else if (email === res.locals.account.email)
+            res.json(failure("Can not ban yourself :)"));
+        else
+            Account.ban({ email, app })
+                .then(() => res.json(success("Account banned")))
+                .catch(err => res.json(failure(err)));
+    },
+
+    // Unbans account
+    unban: (req, res) => {
+        const { email, app } = req.body;
+        if (!isValidEmail(email))
+            res.json(failure("Please provide a valid email"));
+        else if (!isValidAppName(app))
+            res.json(failure("Please provide a valid app name"));
+        else if (email === res.locals.account.email)
+            res.json(failure("Can not self unban :)"));
+        else
+            Account.unban({ email, app })
+                .then(() => res.json(success("Ban removed from account")))
+                .catch(err => res.json(failure(err)));
     }
 };
 

@@ -42,7 +42,11 @@ const mongoose = {
                 throw "Invalid confirmation id";
             else
                 return found.updateOne({ confirmationId: "" });
-        })
+        }),
+
+    // Manage bans
+    setAccountBan: (account, ban) => Account.findOne({ email: account.email, app: account.app })
+        .updateOne({ banned: ban })
 };
 
 module.exports = mongoose;

@@ -78,6 +78,12 @@ module.exports = (database, jwt) => {
         },
 
         // Confirm account
-        confirm: (app, confirmationId) => database.confirmAccount({ app, confirmationId })
+        confirm: (app, confirmationId) => database.confirmAccount({ app, confirmationId }),
+
+        // Bans account
+        ban: (account) => database.setAccountBan(account, true),
+
+        // Unbans account
+        bban: (account) => database.setAccountBan(account, false)
     };
 };
