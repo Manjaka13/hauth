@@ -138,6 +138,21 @@ const accountController = {
             Account.unban({ email, app })
                 .then(() => res.json(success("Ban removed from account")))
                 .catch(err => res.json(failure(err)));
+    },
+
+    // Unbans account
+    delete: (req, res) => {
+        const { email, app } = req.body;
+        if (!isValidEmail(email))
+            res.json(failure("Please provide a valid email"));
+        else if (!isValidAppName(app))
+            res.json(failure("Please provide a valid app name"));
+        else if (email === res.locals.account.email)
+            res.json(failure("Can not self delete :)"));
+        else
+            Account.delete({ email, app })
+                .then(() => res.json(success("Account deleted")))
+                .catch(err => res.json(failure(err)));
     }
 };
 

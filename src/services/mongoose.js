@@ -52,7 +52,11 @@ const mongoose = {
 
     // Manage bans
     setAccountBan: (account, ban) => Account.findOne({ email: account.email, app: account.app })
-        .updateOne({ banned: ban })
+        .updateOne({ banned: ban }),
+
+    // Deletes account
+    delete: (account) => Account.findOne({ email: account.email, app: account.app })
+        .deleteOne()
 };
 
 module.exports = mongoose;

@@ -84,6 +84,9 @@ module.exports = (database, jwt) => {
         ban: (account) => database.setAccountBan(account, true),
 
         // Unbans account
-        bban: (account) => database.setAccountBan(account, false)
+        unban: (account) => database.setAccountBan(account, false),
+
+        // Deletes account
+        delete: (account) => database.delete(account)
     };
 };
