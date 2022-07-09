@@ -5,8 +5,9 @@
 const port = process.env.PORT || 3001;
 const databaseUrl = process.env.DATABASE_HOST;
 const databaseName = process.env.DATABASE_NAME;
-const master = process.env.MASTER || "manjaka.rajaonson@gmail.com";
+const masterEmail = process.env.MASTER || "manjaka.rajaonson@gmail.com";
 const tokenSecret = process.env.TOKEN_SECRET;
+const tokenExpiration = process.env.TOKEN_EXPIRATION || "1h";
 const documentation = {
     "/": {
         access: "public, no login",
@@ -111,10 +112,11 @@ const documentation = {
 };
 
 module.exports = {
-    master,
+    masterEmail,
     port,
     databaseUrl,
     databaseName,
     documentation,
-    tokenSecret
+    tokenSecret,
+    tokenExpiration
 };

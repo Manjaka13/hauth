@@ -1,37 +1,38 @@
 const { failure } = require("../helpers/utils");
-const { verify } = require("../interfaces/userInterface");
-const database = require("../interfaces/mongooseInterface");
+// const { verify } = require("../interfaces/userInterface");
+// const database = require("../interfaces/mongooseInterface");
 
 // Validates token to user object
 const authMiddleware = (req, res, next) => {
     let token = req.headers["authorization"];
     if (token)
         token = token.replace("Bearer ", "");
-    verify(token)
-        .then((user) => {
-            res.locals.user = user;
-        })
-        .catch(() => {
-            res.locals.user = undefined;
-        })
-        .finally(() => next());
+    next();
+    // verify(token)
+    //     .then((user) => {
+    //         res.locals.user = user;
+    //     })
+    //     .catch(() => {
+    //         res.locals.user = undefined;
+    //     })
+    //     .finally(() => next());
 };
 
 // Protects routes from people that aren't logged in
-const isLoggedIn = (req, res, next) => {
-    const user = res.locals.user;
-    if (user && user?.id)
-        database.findUserById(user.id)
-            .then((user) => {
-                if (user.status != 1)
-                    throw "This account isn't active";
-                else
-                    next();
-            })
-            .catch(err => res.json(failure(err)));
-    else
-        res.json(failure("Please login first"));
-};
+// const isLoggedIn = (req, res, next) => {
+//     const user = res.locals.user;
+//     if (user && user?.id)
+//         database.findUserById(user.id)
+//             .then((user) => {
+//                 if (user.status != 1)
+//                     throw "This account isn't active";
+//                 else
+//                     next();
+//             })
+//             .catch(err => res.json(failure(err)));
+//     else
+//         res.json(failure("Please login first"));
+// };
 
 // Protects routes from people that aren't MASTER
 const isMaster = (req, res, next) => {
@@ -53,7 +54,7 @@ const isConfirmed = (req, res, next) => {
 
 module.exports = {
     authMiddleware,
-    isLoggedIn,
+    // isLoggedIn,
     isMaster,
     isConfirmed
 };

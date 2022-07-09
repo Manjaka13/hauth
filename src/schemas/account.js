@@ -1,10 +1,8 @@
-const mongoose = require("mongoose");
-
 /*
-    User model
+    The schema that will be used for account collection
 */
 
-const userSchema = new mongoose.Schema({
+const accountSchema = {
     firstname: {
         type: String,
         required: false
@@ -33,10 +31,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false,
     },
-    status: {
-        type: Number,
-        min: 0,
-        default: 0,
+    banned: {
+        type: Boolean,
+        default: false,
         required: true
     },
     app: {
@@ -47,8 +44,9 @@ const userSchema = new mongoose.Schema({
     confirmationId: {
         type: String
     }
-}, {
-    timestamps: true
-});
+};
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = {
+    name: "Account",
+    schema: accountSchema
+};

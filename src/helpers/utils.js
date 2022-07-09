@@ -34,11 +34,20 @@ const isValidEmail = (email) => (
 		)
 );
 
+// Checks password
+const isValidPassword = (password) => typeof password === "string" && password.length > 2;
+
+// Checks app name
+const isValidAppName = (app) => typeof app === "string" && app.length > 2;
+
 // Format mongoose data
 const mongooseFormat = (user) => user ? ({ ...user._doc, id: user.id, _id: undefined }) : null;
 
 // Returns only specific fields
 const removeProtectedFields = (user) => user ? ({ ...user, password: undefined, confirmationId: undefined }) : null;
+
+// Checks if account is admin
+const isAdmin = (account) => account.level < 2;
 
 module.exports = {
 	answer,
@@ -47,6 +56,9 @@ module.exports = {
 	hash,
 	compare,
 	isValidEmail,
+	isValidPassword,
+	isValidAppName,
 	mongooseFormat,
-	removeProtectedFields
+	removeProtectedFields,
+	isAdmin
 };

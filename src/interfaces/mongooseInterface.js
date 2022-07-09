@@ -1,4 +1,3 @@
-const jwt = require("jsonwebtoken");
 const Mongoose = require("mongoose");
 const User = require("../models/userModel");
 const { databaseUrl, databaseName } = require("../helpers/const");
