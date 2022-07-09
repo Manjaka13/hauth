@@ -1,10 +1,11 @@
-const { isAdmin, hash } = require("../helpers/utils");
+const { tokenSecret, tokenExpiration } = require("../helpers/const");
+const { isAdmin, hash, compare, removeProtectedFields } = require("../helpers/utils");
 
 /*
     Account service
 */
 
-module.exports = (database) => {
+module.exports = (database, jwt) => {
     return {
         // Creates new account
         create: (account) => database.getAccountList(account.app)
@@ -47,6 +48,36 @@ module.exports = (database) => {
                     throw "That app has no admin or does not exist yet";
                 else
                     return accountList.filter((account) => account.level < 2);
-            })
+            }),
+
+        // Login
+        login: (account) => {
+            let user = null;
+            return database.getAccount(account)
+                .then((found) => {
+                    if (!found)
+                        throw `${account.email} does not have an account yet`;
+                    else if (found.banned)
+                        throw `${account.email} was banned`;
+                    else if (found.confirmationId)
+                        throw "Please confirm your email first";
+                    else {
+                        user = found;
+                        return compare(account.password, user.password);
+                    }
+                })
+                .then((samePassword) => {
+                    if (!samePassword)
+                        throw "Wrong password";
+                    else {
+                        user = removeProtectedFields(user);
+                        return jwt.create(user);
+                    }
+                })
+                .then((token) => {
+                    user.token = token;
+                    return user;
+                })
+        }
     };
 };

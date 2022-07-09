@@ -33,15 +33,23 @@ module.exports = (jwt) => ({
     },
 
     // User must be logged out to access next route
-    isNotConnected: (req, res, next) => {
+    mustBeLoggedOut: (req, res, next) => {
         if (res.locals.account)
             res.json(failure("Please logout first"));
         else
             next();
     },
 
+    // User "should" be logged out for the next route
+    shouldBeLoggedOut: (req, res, next) => {
+        if (res.locals.account)
+            res.json(failure("You are already connected"));
+        else
+            next();
+    },
+
     // User must be logged in to access next route
-    isConnected: (req, res, next) => {
+    mustBeLoggedIn: (req, res, next) => {
         if (res.locals.account)
             next();
         else
