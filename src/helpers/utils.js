@@ -41,14 +41,17 @@ const isValidPassword = (password) => typeof password === "string" && password.l
 const isValidAppName = (app) => typeof app === "string" && app.length > 2;
 
 // Format mongoose data
-const mongooseFormat = (user) => user ? ({ ...user._doc, id: user.id, _id: undefined }) : null;
+const mongooseFormat = (account) => account ? ({ ...account._doc, id: account.id, _id: undefined }) : null;
 
 // Returns only specific fields
-const removeProtectedFields = (user) => {
-	if (!Array.isArray(user) && typeof user === "object") {
-		delete user.password;
-		delete user.confirmationId;
-		return user;
+const removeProtectedFields = (account) => {
+	if (!Array.isArray(account) && typeof account === "object") {
+		delete account.password;
+		delete account.confirmationId;
+		delete account.__v;
+		delete account.createdAt;
+		delete account.updatedAt;
+		return account;
 	}
 	return null;
 };

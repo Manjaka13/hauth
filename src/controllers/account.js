@@ -98,6 +98,14 @@ const accountController = {
             Account.confirm(app, confirmationId)
                 .then(() => res.json(success("Account confirmed")))
                 .catch(err => res.json(failure(err)));
+    },
+
+    // Verifies incoming token
+    verify: (req, res) => {
+        if (res.locals.account)
+            res.json(success("User logged in", res.locals.account));
+        else
+            res.json(failure("User not logged in"));
     }
 };
 
