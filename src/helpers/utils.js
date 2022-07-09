@@ -19,7 +19,7 @@ const failure = (err) => answer(err?._message ? err._message : typeof err === "s
 const success = (caption, payload) => answer(caption, payload, 1);
 
 // Hashes password
-const hash = (password) => bcrypt.hash(password, 10);
+const hash = (password) => typeof password === "string" ? bcrypt.hash(password, 10) : new Promise((resolve, reject) => reject("Please provide a string to hash"));
 
 // Compares password
 const compare = (password, hashedPassword) => bcrypt.compare(password, hashedPassword);
@@ -41,13 +41,33 @@ const isValidPassword = (password) => typeof password === "string" && password.l
 const isValidAppName = (app) => typeof app === "string" && app.length > 2;
 
 // Format mongoose data
-const mongooseFormat = (user) => user ? ({ ...user._doc, id: user.id, _id: undefined }) : null;
+const mongooseFormat = (user) => {
+	if (!Array.isArray(user) && typeof user === "object") {
+		if (user._doc) {
+			user = { ...user._doc };
+			user.id = user._id;
+			delete user._id;
+			delete user.__v;
+			delete user.createdAt;
+			delete user.updatedAt;
+		}
+		return user;
+	}
+	return null;
+};
 
 // Returns only specific fields
-const removeProtectedFields = (user) => user ? ({ ...user, password: undefined, confirmationId: undefined }) : null;
+const removeProtectedFields = (user) => {
+	if (!Array.isArray(user) && typeof user === "object") {
+		delete user.password;
+		delete user.confirmationId;
+		return user;
+	}
+	return null;
+};
 
 // Checks if account is admin
-const isAdmin = (account) => account.level < 2;
+const isAdmin = (account) => account ? (account?.level >= 0 && account?.level < 2) : false;
 
 module.exports = {
 	answer,
