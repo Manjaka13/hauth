@@ -10,9 +10,7 @@ const Account = require("../services/account")(database);
 module.exports = (jwt) => ({
     // Gets account from token
     getLoggedAccount: (req, res, next) => {
-        let token = req.headers["authorization"];
-        if (token)
-            token = token.replace("Bearer ", "");
+        const { token } = req.cookies;
         jwt.verify(token)
             .then(({ app, email }) => Account.get(app, email))
             .then((account) => {

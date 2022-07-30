@@ -1,6 +1,7 @@
 // Get env
 require("dotenv").config();
 const Express = require("express");
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const database = require("./services/mongoose");
 const jwt = require("./services/jwt");
@@ -19,6 +20,7 @@ const app = Express();
 
 // Apply middlewares
 app.use(cors());
+app.use(cookieParser());
 app.use(Express.urlencoded({ extended: true }));
 app.use(Express.json());
 app.use(jsonCheck);

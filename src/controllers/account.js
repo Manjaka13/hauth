@@ -77,7 +77,15 @@ const accountController = {
                 throw "App name is invalid";
 
             Account.login(app, email, password)
-                .then((account) => res.json(success("Logged in successfully", account)))
+                .then((account) => {
+                    const { token } = account;
+                    delete account.token;
+                    res.cookie("token", token, {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV
+                    })
+                        .json(success("Logged in successfully", account));
+                })
                 .catch(err => res.json(failure(err)));
         } catch (err) {
             res.json(failure(err));
