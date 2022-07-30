@@ -82,7 +82,7 @@ const accountController = {
                     delete account.token;
                     res.cookie("token", token, {
                         httpOnly: true,
-                        secure: process.env.NODE_ENV
+                        secure: process.env.HTTPS
                     })
                         .json(success("Logged in successfully", account));
                 })
