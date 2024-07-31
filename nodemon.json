@@ -1,0 +1,6 @@
+{
+	"watch": ["src"],
+	"ext": ".ts,.js",
+	"ignore": [],
+	"exec": "npx tsc && tsc-alias -p tsconfig.json && node build/index.js"
+}

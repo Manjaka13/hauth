@@ -1,12 +1,22 @@
 {
 	"env": {
 		"browser": false,
-		"es2021": true,
+		"es6": true,
 		"node": true
 	},
-	"plugins": ["jest"],
-	"extends": ["eslint:recommended"],
+	"root": true,
+	"parser": "@typescript-eslint/parser",
+	"plugins": ["@typescript-eslint", "jest"],
+	"extends": [
+		"eslint:recommended",
+		"plugin:@typescript-eslint/eslint-recommended",
+		"plugin:@typescript-eslint/recommended"
+	],
 	"rules": {
-		"no-unused-vars": ["off"]
+		"no-unused-vars": ["off"],
+		"@typescript-eslint/no-explicit-any": "off"
+	},
+	"parserOptions": {
+		"sourceType": "module"
 	}
 }
