@@ -2,7 +2,8 @@ import type { NextFunction, Request, Response } from "express";
 import Database from "@/services/database";
 import { failure } from "@/services/response";
 import { jwtVerify } from "@/services/jwt";
-import { isAdmin } from "@/helpers/utils";
+import { isAdmin, isMaster } from "@/helpers/utils";
+import { Account } from "@/helpers/types";
 
 /**
  * Authentication middlewares
@@ -27,17 +28,6 @@ export const getLoggedAccount = (
 			res.locals.account = null;
 		})
 		.finally(next);
-};
-
-// The user must not to be banned to access next route
-export const mustNotBanned = (
-	req: Request,
-	res: Response,
-	next: NextFunction
-) => {
-	if (res.locals.account && res.locals.account.banned)
-		res.json(failure("This account have been banned", res.locals.account));
-	else next();
 };
 
 // User must be logged out to access next route
@@ -70,25 +60,42 @@ export const mustBeLoggedIn = (
 	else res.json(failure("Please login first"));
 };
 
-// The user must confirm his email to reach the next route
-export const mustBeConfirmed = (
+// The user must be a master to check the next route
+export const mustBeMaster = (
 	req: Request,
 	res: Response,
 	next: NextFunction
 ) => {
-	if (res.locals.account && !res.locals.account.confirmationId) next();
-	else res.json(failure("Please confirm your account first"));
+	if (isMaster(res.locals?.account?.level)) next();
+	else res.json(failure("You have to be a master to access this route"));
 };
 
-// The user must be an admin to check the next route
-export const mustBeAdmin = (
-	req: Request,
-	res: Response,
-	next: NextFunction
-) => {
-	if (isAdmin(res.locals?.account?.level)) next();
-	else res.json(failure("You have to be admin to access this route"));
+// The user must not be banned to access the next route
+export const checkBan = (req: Request, res: Response, next: NextFunction) => {
+	if (res.locals?.account?.banned) res.json(failure("You have been banned"));
+	else next();
 };
+
+/**
+ * Promise middleware
+ */
+export const mustNotBanned = (account: Account): Promise<Account> =>
+	new Promise((resolve, reject) => {
+		if (account.banned) reject(`${account.email} was banned from this service`);
+		else resolve(account);
+	});
+
+export const mustBeConfirmed = (account: Account): Promise<Account> =>
+	new Promise((resolve, reject) => {
+		if (!account.confirmed) reject(`This account has not yet been confirmed`);
+		else resolve(account);
+	});
+
+export const mustBeAdmin = (account: Account): Promise<Account> =>
+	new Promise((resolve, reject) => {
+		if (!isAdmin(account.level)) reject(`This action needs admin privileges`);
+		else resolve(account);
+	});
 
 export default {
 	getLoggedAccount,

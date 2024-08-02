@@ -44,7 +44,7 @@ export const loginUser = (app: string, email: string, password: string) => {
 	let targetAccount: any;
 	return Database.getAccountByAppEmail(app, email)
 		.then((account) => {
-			if (!account) throw `${email} is associated to no account`;
+			if (!account) throw `${email} is associated to no account on ${app}`;
 			else if (account.banned) throw `${email} was banned`;
 			else if (!account.confirmed) throw "Please confirm your email first";
 			else {
@@ -73,7 +73,10 @@ export const confirmAccount = (id: string, password: string) =>
 			if (!account) throw "Unknown account id";
 			else return matchPassword(password, account.password);
 		})
-		.then(() => Database.updateAccount(id, { confirmed: true }));
+		.then((match) => {
+			if (match) return Database.updateAccount(id, { confirmed: true });
+			else throw "Wrong password";
+		});
 
 // Bans account
 export const banAccount = (

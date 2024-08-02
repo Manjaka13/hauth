@@ -7,7 +7,7 @@ import cors from "cors";
 import { SERVER_PORT } from "@/helpers/const";
 import accountRoute from "@/routes/account";
 import { notFoundCheck } from "@/middlewares/notFoundCheck";
-import { getLoggedAccount, mustNotBanned } from "@/middlewares/auth";
+import { checkBan, getLoggedAccount } from "@/middlewares/auth";
 
 /**
  * Server main entry
@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use(Express.urlencoded({ extended: true }));
 app.use(Express.json());
 app.use(getLoggedAccount);
-app.use(mustNotBanned);
+app.use(checkBan);
 
 // Setup routes
 app.use("/api/v1" + accountRoute.path, accountRoute.router);
