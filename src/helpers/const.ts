@@ -7,9 +7,9 @@ import { v4 as uuidv4 } from "uuid";
 // Server
 export const SERVER_PORT = process.env.SERVER_PORT || "3001";
 
-// Database
-export const DATABASE_URL = process.env.DATABASE_HOST || "";
-export const DATABASE_NAME = process.env.DATABASE_NAME || "";
+// Supabase
+export const SUPABASE_URL = process.env.SUPABASE_URL || "";
+export const SUPABASE_APIKEY = process.env.SUPABASE_APIKEY || "";
 
 // Auth
 export const TOKEN_SECRET = process.env.TOKEN_SECRET || uuidv4();

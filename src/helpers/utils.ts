@@ -1,3 +1,5 @@
+import type { Account, NewAccount } from "@/helpers/types";
+
 /**
  * Various useful functions
  */
@@ -32,9 +34,34 @@ export const protectData = (data: any) => {
 export const protectDataList = (dataList: any) => dataList.map(protectData);
 
 /**
- *
- * @param account given account to be tested
+ * Checks if the account level given is admin
+ * @param account given level to be tested
  * @returns boolean
  */
 export const isAdmin = (level: number) =>
-	typeof level === "number" && (level === 1 || level === 2);
+	typeof level === "number" && level <= 1;
+
+/**
+ * Checks if the account level given is master
+ * @param account given level to be tested
+ * @returns boolean
+ */
+export const isMaster = (level: number) =>
+	typeof level === "number" && level <= 0;
+
+/**
+ * Formats account to new account
+ * @param account give the account objet
+ * @returns returns the new account format
+ */
+export const getFormatedNewAccount = (
+	account: Account | NewAccount
+): NewAccount => ({
+	email: account.email,
+	firstname: account.firstname,
+	lastname: account.lastname,
+	password: account.password,
+	level: account.level,
+	avatar: account.avatar,
+	app: account.app,
+});

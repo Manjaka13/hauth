@@ -4,7 +4,6 @@ dotenv.config();
 import Express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import database from "@/services/mongoose";
 import { SERVER_PORT } from "@/helpers/const";
 import accountRoute from "@/routes/account";
 import { notFoundCheck } from "@/middlewares/notFoundCheck";
@@ -29,13 +28,7 @@ app.use(mustNotBanned);
 app.use("/api/v1" + accountRoute.path, accountRoute.router);
 app.use(notFoundCheck);
 
-// Connects to database
-database
-	.connect()
-	.then(() => {
-		// Awaiting for incoming request
-		app.listen(SERVER_PORT, () => {
-			console.log(`HAuth running on port ${SERVER_PORT}`);
-		});
-	})
-	.catch(console.error);
+// Awaiting for incoming request
+app.listen(SERVER_PORT, () => {
+	console.log(`HAuth running on port ${SERVER_PORT}`);
+});

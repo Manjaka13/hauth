@@ -5,7 +5,7 @@
 	"main": "src/index.js",
 	"scripts": {
 		"clean": "rimraf build",
-		"dev": "nodemon",
+		"dev": "ts-node-dev --require tsconfig-paths/register src/index.ts",
 		"lint": "tsc && eslint --fix --ext .js,.ts .",
 		"build": "npm run clean && tsc && tsc-alias -p tsconfig.json",
 		"start": "node build/index.js"
@@ -16,6 +16,7 @@
 	"author": "Hari13 <manjaka.rajaonson@gmail.com>",
 	"license": "ISC",
 	"dependencies": {
+		"@supabase/supabase-js": "^2.45.0",
 		"bcrypt": "^5.0.1",
 		"cookie-parser": "^1.4.6",
 		"cors": "^2.8.5",
@@ -25,6 +26,8 @@
 		"mongodb": "^4.4.1",
 		"mongoose": "^6.4.2",
 		"node-mailjet": "^5.0.1",
+		"pg": "^8.12.0",
+		"postgres": "^3.4.4",
 		"rimraf": "^6.0.1",
 		"uuid": "^8.3.2"
 	},
@@ -37,6 +40,7 @@
 		"@types/mongodb": "^4.0.7",
 		"@types/node": "^22.0.0",
 		"@types/node-mailjet": "^3.3.12",
+		"@types/pg": "^8.11.6",
 		"@types/uuid": "^10.0.0",
 		"@typescript-eslint/eslint-plugin": "^5.62.0",
 		"@typescript-eslint/parser": "^5.62.0",
@@ -45,8 +49,11 @@
 		"jest": "^28.1.2",
 		"nodemon": "^2.0.18",
 		"prettier": "^2.6.1",
+		"supabase": "^1.187.10",
 		"ts-node": "^10.9.2",
+		"ts-node-dev": "^2.0.0",
 		"tsc-alias": "^1.8.10",
+		"tsconfig-paths": "^4.2.0",
 		"typescript": "^5.5.4"
 	},
 	"imports": {

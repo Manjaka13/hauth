@@ -7,7 +7,7 @@
  * @param email string, the email address
  * @returns boolean
  */
-export const validEmail = (email: string): boolean =>
+export const validEmail = (email?: string): boolean =>
 	typeof email === "string" &&
 	Array.isArray(
 		email
@@ -22,7 +22,7 @@ export const validEmail = (email: string): boolean =>
  * @param password string, the password to test
  * @returns boolean
  */
-export const validPassword = (password: string): boolean =>
+export const validPassword = (password?: string): boolean =>
 	typeof password === "string" && password.length > 2;
 
 /**
@@ -30,5 +30,5 @@ export const validPassword = (password: string): boolean =>
  * @param name string, name to be tested
  * @returns boolean
  */
-export const validName = (name: string): boolean =>
-	typeof name === "string" && Array.isArray(name.match(/^[a-zA-Z]{3,}$/));
+export const validName = (name?: string): boolean =>
+	typeof name === "string" && Array.isArray(name.match(/^[a-zA-Z-]{3,}$/));

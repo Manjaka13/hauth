@@ -19,7 +19,7 @@ export const getLoggedAccount = (
 ) => {
 	const { token } = req.cookies;
 	jwtVerify(token)
-		.then(({ app, email }) => Database.getAccount(app, email))
+		.then(({ id }) => Database.getAccountById(id))
 		.then((account) => {
 			res.locals.account = account;
 		})

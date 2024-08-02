@@ -13,10 +13,16 @@ import {
  */
 
 const router = Express.Router();
-router.post("/create", mustBeLoggedOut, Account.create);
-router.post("/create/admin", mustBeLoggedOut, Account.createAdmin);
-router.get("/get/admin", Account.getAdminList);
-router.post("/login", shouldBeLoggedOut, Account.login);
+router.post("/sign-up/user", mustBeLoggedOut, Account.signUp);
+router.post("/sign-up/admin", mustBeLoggedOut, Account.signUpAdmin);
+router.get(
+	"/list/admin/:app",
+	mustBeLoggedIn,
+	mustBeAdmin,
+	mustBeConfirmed,
+	Account.getAdminList
+);
+router.post("/sign-in", shouldBeLoggedOut, Account.signIn);
 router.post("/confirm", shouldBeLoggedOut, Account.confirm);
 router.post("/verify", Account.verify);
 router.put("/ban", mustBeLoggedIn, mustBeAdmin, mustBeConfirmed, Account.ban);
@@ -36,4 +42,4 @@ router.delete(
 );
 router.put("/update", mustBeLoggedIn, mustBeConfirmed, Account.update);
 
-export default { path: "/account", router };
+export default { path: "/", router };
